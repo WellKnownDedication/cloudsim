@@ -8,7 +8,7 @@
  */
 
 
-package org.cloudbus.cloudsim.simulations;
+package testing;
 
 import org.cloudbus.cloudsim.*;
 import java.io.FileWriter;
@@ -326,12 +326,21 @@ public class cloudsimTest {
             for (Cloudlet cloudlet : list) {
                 writer.append(String.format("%d,%s,%d,%d,%.2f,%.2f,%.2f\n",
                     cloudlet.getCloudletId(),
-                    getStatusString(cloudlet.getStatus()),
+					cloudlet.getUserId(),
+                    cloudlet.getStatus(),
                     cloudlet.getResourceId(),
-                    cloudlet.getVmId(),
+					cloudlet.getSubmissionTime(),
                     cloudlet.getExecStartTime(),
-                    cloudlet.getFinishTime(),
-                    cloudlet.getActualCPUTime()
+					cloudlet.getExecFinishTime(),
+                    cloudlet.getCloudletLength(),
+                    cloudlet.getActualCPUTime(),
+					cloudlet.getProcessingCost(),
+					cloudlet.getCloudletFileSize(),
+					cloudlet.getUtilizationModelCpu(),
+					cloudlet.getUtilizationModelRam(),
+					cloudlet.getUtilizationModelBw(),
+					cloudlet.getProcessingCost(),
+					cloudlet.getWaitingTime()
                 ));
             }
 
@@ -342,16 +351,7 @@ public class cloudsimTest {
         }
     }
 
-	private static String getStatusString(int status) {
-        switch (status) {
-            case Cloudlet.SUCCESS:
-                return "SUCCESS";
-            case Cloudlet.FAILED:
-                return "FAILED";
-            case Cloudlet.CANCELED:
-                return "CANCELED";
-            default:
-                return "UNKNOWN";
-        }
-    }
+	
+	
+	
 }
