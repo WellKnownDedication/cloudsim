@@ -8,7 +8,7 @@
  */
 
 
-package heterogenous;
+package heterogenous.roundRobin;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,7 +42,7 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  * An example showing how to create
  * scalable simulations.
  */
-public class baselineMultiDatacenterHeterogenous {
+public class roundRobinMultiDatacenterHeterogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -140,8 +140,8 @@ public class baselineMultiDatacenterHeterogenous {
 			CloudSim.stopSimulation();
 
 			//printCloudletList(newList);
-			String path = "./modules/cloudsim-simulations/src/main/java/";
-			writeCloudletListToCSV(newList, path + "heterogenous/baselineMultiDatacenterHeterogenous.csv");
+			String path = "modules/cloudsim-simulations/src/main/java/results/";
+			writeCloudletListToCSV(newList, path + "roundRobinMultiDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}

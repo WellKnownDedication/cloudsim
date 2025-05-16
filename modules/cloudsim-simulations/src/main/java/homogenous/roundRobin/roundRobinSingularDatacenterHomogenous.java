@@ -8,7 +8,7 @@
  */
 
 
-package heterogenous;
+package homogenous.roundRobin;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -38,11 +37,13 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import RoundRobin.RoundRobinDatacenterBroker;
+
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class baselineSingularDatacenterHeterogenous {
+public class roundRobinSingularDatacenterHomogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -75,16 +76,15 @@ public class baselineSingularDatacenterHeterogenous {
 	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
 		// Creates a container to store Cloudlets
 		List<Cloudlet> list = new ArrayList<>();
-		Random rand = new Random();
 
 		//cloudlet parameters
+		long length = 4000;
+		long fileSize = 500;
+		long outputSize = 400;
+		int pesNumber = 2;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
 
 		for(int i=0;i<cloudlets;i++){
-			long length = 1000 + rand.nextInt(19000);;
-			long fileSize = 300 + rand.nextInt(700); 
-			long outputSize = 300 + rand.nextInt(700);
-			int pesNumber = 1 + rand.nextInt(2);
 			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
 			list.getLast().setUserId(userId);
 		}
@@ -116,7 +116,7 @@ public class baselineSingularDatacenterHeterogenous {
 			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1);
 
 			//Third step: Create Broker
-			broker = new DatacenterBroker("Broker");;
+			broker = new RoundRobinDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
 			//Fourth step: Create VMs and Cloudlets and send them to broker
@@ -137,8 +137,8 @@ public class baselineSingularDatacenterHeterogenous {
 			CloudSim.stopSimulation();
 
 			//printCloudletList(newList);
-			String path = "./modules/cloudsim-simulations/src/main/java/";
-			writeCloudletListToCSV(newList, path + "heterogenous/baselineSingularDatacenterHeterogenous.csv");
+			String path = "modules/cloudsim-simulations/src/main/java/results/";
+			writeCloudletListToCSV(newList, path + "roundRobinSingularDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -250,9 +250,16 @@ public class baselineSingularDatacenterHeterogenous {
 		DecimalFormat dft = new DecimalFormat("###.##");
 	
 		// Header
-		sb.append("Cloudlet ID,User ID,Status,Data Center ID,Submission Time,Start Time,Finish Time,")
+		sb.append("Cloudlet ID,")
+		  .append("User ID,")
+		  .append("Status,")
+		  .append("Data Center ID,")
+		  .append("Submission Time,")
+		  .append("Start Time,")
+		  .append("Finish Time,")
 		  .append("Cloudlet Length,Processing Cost,File Size,")
 		  .append("CPU Utilization,RAM Utilization,BW Utilization,Waiting Time\n");
+		  
 	
 		for (Cloudlet cloudlet : list) {
 			//if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
