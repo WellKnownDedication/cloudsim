@@ -8,7 +8,7 @@
  */
 
 
-package homogenous.roundRobin;
+package heterogenous.geneticAlgorythm;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -37,13 +38,13 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-import brokers.RoundRobin.RoundRobinDatacenterBroker;
+import brokers.GeneticAlgorithm.GeneticAlgorithmDatacenterBroker;
 
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class roundRobinMultiDatacenterHomogenous {
+public class GASingularDatacenterHeterogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -76,15 +77,16 @@ public class roundRobinMultiDatacenterHomogenous {
 	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
 		// Creates a container to store Cloudlets
 		List<Cloudlet> list = new ArrayList<>();
+		Random rand = new Random();
 
 		//cloudlet parameters
-		long length = 4000;
-		long fileSize = 500;
-		long outputSize = 400;
-		int pesNumber = 2;
 		UtilizationModel utilizationModel = new UtilizationModelFull();
 
 		for(int i=0;i<cloudlets;i++){
+			long length = 1000 + rand.nextInt(19000);;
+			long fileSize = 300 + rand.nextInt(700); 
+			long outputSize = 300 + rand.nextInt(700);
+			int pesNumber = 1 + rand.nextInt(2);
 			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
 			list.getLast().setUserId(userId);
 		}
@@ -113,20 +115,17 @@ public class roundRobinMultiDatacenterHomogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1000, 0.8);
-			Datacenter datacenter1 = createDatacenter("Datacenter_1", 4, 1200, 1.1);
-			Datacenter datacenter2 = createDatacenter("Datacenter_2", 2, 900, 1);
+			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1);
 
 			//Third step: Create Broker
-			broker = new RoundRobinDatacenterBroker("Broker");;
+			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
 			//Fourth step: Create VMs and Cloudlets and send them to broker
-			int datacenterAmount = 3;
 			int totalCloudlets = 1000;
 
-			vmlist = createVM(brokerId,4*3);
-			cloudletList = createCloudlet(brokerId,totalCloudlets); 	
+			vmlist = createVM(brokerId,4); //creating 20 vms
+			cloudletList = createCloudlet(brokerId,totalCloudlets); // creating 40 cloudlets	
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -141,7 +140,7 @@ public class roundRobinMultiDatacenterHomogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			writeCloudletListToCSV(newList, path + "roundRobinMultiDatacenterHomogenous.csv");
+			writeCloudletListToCSV(newList, path + "GASingularDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -152,7 +151,7 @@ public class roundRobinMultiDatacenterHomogenous {
 		}
 	}
 
-	private static Datacenter createDatacenter(String name, int hostNumber, int bw, double cost_multiplier){
+	private static Datacenter createDatacenter(String name, int hostNumber, double cost_multiplier){
 
 		// Here are the steps needed to create a PowerDatacenter:
 		// 1. We need to create a list to store one or more
@@ -168,7 +167,7 @@ public class roundRobinMultiDatacenterHomogenous {
 		int hostId=0;
 		int ram = 4000; //host memory (MB)
 		long storage = 1000000; //host storage
-		//int bw = 10000;
+		int bw = 10000;
 
 		for (int i = 0; hostNumber > i; i++){
 			List<Pe> peList = new ArrayList<>();
@@ -253,16 +252,9 @@ public class roundRobinMultiDatacenterHomogenous {
 		DecimalFormat dft = new DecimalFormat("###.##");
 	
 		// Header
-		sb.append("Cloudlet ID,")
-		  .append("User ID,")
-		  .append("Status,")
-		  .append("Data Center ID,")
-		  .append("Submission Time,")
-		  .append("Start Time,")
-		  .append("Finish Time,")
+		sb.append("Cloudlet ID,User ID,Status,Data Center ID,Submission Time,Start Time,Finish Time,")
 		  .append("Cloudlet Length,Processing Cost,File Size,")
 		  .append("CPU Utilization,RAM Utilization,BW Utilization,Waiting Time\n");
-		  
 	
 		for (Cloudlet cloudlet : list) {
 			//if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {

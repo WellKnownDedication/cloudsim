@@ -37,7 +37,7 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
-import RoundRobin.RoundRobinDatacenterBroker;
+import brokers.RoundRobin.RoundRobinDatacenterBroker;
 
 /**
  * An example showing how to create

@@ -8,7 +8,7 @@
  */
 
 
-package homogenous.roundRobin;
+package homogenous.geneticAlgorythm;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,13 +37,14 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import brokers.GeneticAlgorithm.GeneticAlgorithmDatacenterBroker;
 import brokers.RoundRobin.RoundRobinDatacenterBroker;
 
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class roundRobinMultiDatacenterHomogenous {
+public class GASingularDatacenterHomogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -113,20 +114,17 @@ public class roundRobinMultiDatacenterHomogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1000, 0.8);
-			Datacenter datacenter1 = createDatacenter("Datacenter_1", 4, 1200, 1.1);
-			Datacenter datacenter2 = createDatacenter("Datacenter_2", 2, 900, 1);
+			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1);
 
 			//Third step: Create Broker
-			broker = new RoundRobinDatacenterBroker("Broker");;
+			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
 			//Fourth step: Create VMs and Cloudlets and send them to broker
-			int datacenterAmount = 3;
 			int totalCloudlets = 1000;
 
-			vmlist = createVM(brokerId,4*3);
-			cloudletList = createCloudlet(brokerId,totalCloudlets); 	
+			vmlist = createVM(brokerId,4); //creating 20 vms
+			cloudletList = createCloudlet(brokerId,totalCloudlets); // creating 40 cloudlets	
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -141,7 +139,7 @@ public class roundRobinMultiDatacenterHomogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			writeCloudletListToCSV(newList, path + "roundRobinMultiDatacenterHomogenous.csv");
+			writeCloudletListToCSV(newList, path + "GASingularDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -152,7 +150,7 @@ public class roundRobinMultiDatacenterHomogenous {
 		}
 	}
 
-	private static Datacenter createDatacenter(String name, int hostNumber, int bw, double cost_multiplier){
+	private static Datacenter createDatacenter(String name, int hostNumber, double cost_multiplier){
 
 		// Here are the steps needed to create a PowerDatacenter:
 		// 1. We need to create a list to store one or more
@@ -168,7 +166,7 @@ public class roundRobinMultiDatacenterHomogenous {
 		int hostId=0;
 		int ram = 4000; //host memory (MB)
 		long storage = 1000000; //host storage
-		//int bw = 10000;
+		int bw = 10000;
 
 		for (int i = 0; hostNumber > i; i++){
 			List<Pe> peList = new ArrayList<>();

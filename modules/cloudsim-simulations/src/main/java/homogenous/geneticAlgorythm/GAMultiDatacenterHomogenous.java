@@ -8,7 +8,7 @@
  */
 
 
-package homogenous.roundRobin;
+package homogenous.geneticAlgorythm;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,13 +37,14 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import brokers.GeneticAlgorithm.GeneticAlgorithmDatacenterBroker;
 import brokers.RoundRobin.RoundRobinDatacenterBroker;
 
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class roundRobinMultiDatacenterHomogenous {
+public class GAMultiDatacenterHomogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -118,7 +119,7 @@ public class roundRobinMultiDatacenterHomogenous {
 			Datacenter datacenter2 = createDatacenter("Datacenter_2", 2, 900, 1);
 
 			//Third step: Create Broker
-			broker = new RoundRobinDatacenterBroker("Broker");;
+			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
 			//Fourth step: Create VMs and Cloudlets and send them to broker
@@ -141,7 +142,7 @@ public class roundRobinMultiDatacenterHomogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			writeCloudletListToCSV(newList, path + "roundRobinMultiDatacenterHomogenous.csv");
+			writeCloudletListToCSV(newList, path + "GAMultiDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
