@@ -113,9 +113,9 @@ public class baselineMultiDatacenterHomogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1000, 0.8);
-			Datacenter datacenter1 = createDatacenter("Datacenter_1", 4, 1200, 1.1);
-			Datacenter datacenter2 = createDatacenter("Datacenter_2", 2, 900, 1);
+			Datacenter datacenter0 = simulationParameters.createDatacenter("Datacenter_0", 2, 1000, 0.8);
+			Datacenter datacenter1 = simulationParameters.createDatacenter("Datacenter_1", 4, 1200, 1.1);
+			Datacenter datacenter2 = simulationParameters.createDatacenter("Datacenter_2", 2, 900, 1);
 
 			//Third step: Create Broker
 			broker = new DatacenterBroker("Broker");;
@@ -125,7 +125,7 @@ public class baselineMultiDatacenterHomogenous {
 			int datacenterAmount = 3;
 			int totalCloudlets = 1000;
 
-			vmlist = createVM(brokerId,4*3);
+			vmlist = createVM(brokerId,18);
 			cloudletList = createCloudlet(brokerId,totalCloudlets); 	
 
 			broker.submitGuestList(vmlist);

@@ -118,7 +118,7 @@ public class GASingularDatacenterHeterogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1);
+			Datacenter datacenter0 = simulationParameters.createDatacenter("Datacenter_0", 2, 1000, 1);
 
 			//Third step: Create Broker
 			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
