@@ -13,6 +13,7 @@ import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
+import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
@@ -121,6 +122,36 @@ public class simulationParameters {
 				sb.append(cloudlet.getUtilizationModelBw().getClass().getSimpleName()).append(",");
 				sb.append(dft.format(cloudlet.getWaitingTime())).append("\n");
 			//}
+		}
+	
+		try (FileWriter writer = new FileWriter(filePath)) {
+			writer.write(sb.toString());
+			System.out.println("Cloudlet results saved to " + filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void writeVMListToCSV(List<Vm> list, String filePath) {
+		StringBuilder sb = new StringBuilder();
+		DecimalFormat dft = new DecimalFormat("###.##");
+	
+		// Header
+		sb.append("Cloudlet ID,")
+		  .append("User ID,")
+		  .append("Status,")
+		  .append("Data Center ID,")
+		  .append("Submission Time,")
+		  .append("Start Time,")
+		  .append("Finish Time,")
+		  .append("Cloudlet Length,Processing Cost,File Size,")
+		  .append("CPU Utilization,RAM Utilization,BW Utilization,Waiting Time\n");
+		  
+	
+		for (Vm vm : list) {
+			sb.append(vm.getId());
+			sb.append(vm.get)
+
 		}
 	
 		try (FileWriter writer = new FileWriter(filePath)) {
