@@ -107,6 +107,7 @@ public class GASingularDatacenterHeterogenous {
 		Log.println("Starting baselineSingularDatacenter...");
 
 		try {
+			simulationParameters sp = new simulationParameters();
 			// First step: Initialize the CloudSim package. It should be called
 			// before creating any entities.
 			int num_user = 1;   // number of grid users
@@ -118,7 +119,7 @@ public class GASingularDatacenterHeterogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = simulationParameters.createDatacenter("Datacenter_0", 2, 1000, 1);
+			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
 
 			//Third step: Create Broker
 			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
@@ -128,7 +129,7 @@ public class GASingularDatacenterHeterogenous {
 			int totalCloudlets = 1000;
 
 			vmlist = createVM(brokerId,4); //creating 20 vms
-			cloudletList = createCloudlet(brokerId,totalCloudlets); // creating 40 cloudlets	
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); // creating 40 cloudlets	
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -143,7 +144,7 @@ public class GASingularDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			simulationParameters.writeCloudletListToCSV(newList, path + "GASingularDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "GASingularDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}

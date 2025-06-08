@@ -105,6 +105,7 @@ public class roundRobinSingularDatacenterHeterogenous {
 		Log.println("Starting baselineSingularDatacenter...");
 
 		try {
+			simulationParameters sp = new simulationParameters();
 			// First step: Initialize the CloudSim package. It should be called
 			// before creating any entities.
 			int num_user = 1;   // number of grid users
@@ -116,17 +117,14 @@ public class roundRobinSingularDatacenterHeterogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Datacenter_0", 2, 1);
+			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
 
 			//Third step: Create Broker
 			broker = new DatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			//Fourth step: Create VMs and Cloudlets and send them to broker
-			int totalCloudlets = 1000;
-
-			vmlist = createVM(brokerId,4); //creating 20 vms
-			cloudletList = createCloudlet(brokerId,totalCloudlets); // creating 40 cloudlets	
+			vmlist = createVM(brokerId,4); 
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -141,7 +139,7 @@ public class roundRobinSingularDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			simulationParameters.writeCloudletListToCSV(newList, path + "roundRobinSingularDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "roundRobinSingularDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}

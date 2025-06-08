@@ -21,8 +21,10 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 public class simulationParameters {
+	public int cloudletNumber = 5000;
+	public int bw = 1500;
 
-	public static Datacenter createDatacenter(String name, int hostNumber, int bw, double cost_multiplier){
+	public Datacenter createDatacenter(String name, int hostNumber, int bw, double cost_multiplier){
 
 		// Here are the steps needed to create a PowerDatacenter:
 		// 1. We need to create a list to store one or more
@@ -89,7 +91,7 @@ public class simulationParameters {
 		return datacenter;
 	}
     
-    public static void writeCloudletListToCSV(List<Cloudlet> list, String filePath) {
+    public void writeCloudletListToCSV(List<Cloudlet> list, String filePath) {
 		StringBuilder sb = new StringBuilder();
 		DecimalFormat dft = new DecimalFormat("###.##");
 	
@@ -132,33 +134,33 @@ public class simulationParameters {
 		}
 	}
 
-	public static void writeVMListToCSV(List<Vm> list, String filePath) {
-		StringBuilder sb = new StringBuilder();
-		DecimalFormat dft = new DecimalFormat("###.##");
+	// public static void writeVMListToCSV(List<Vm> list, String filePath) {
+	// 	StringBuilder sb = new StringBuilder();
+	// 	DecimalFormat dft = new DecimalFormat("###.##");
 	
-		// Header
-		sb.append("Cloudlet ID,")
-		  .append("User ID,")
-		  .append("Status,")
-		  .append("Data Center ID,")
-		  .append("Submission Time,")
-		  .append("Start Time,")
-		  .append("Finish Time,")
-		  .append("Cloudlet Length,Processing Cost,File Size,")
-		  .append("CPU Utilization,RAM Utilization,BW Utilization,Waiting Time\n");
+	// 	// Header
+	// 	sb.append("Cloudlet ID,")
+	// 	  .append("User ID,")
+	// 	  .append("Status,")
+	// 	  .append("Data Center ID,")
+	// 	  .append("Submission Time,")
+	// 	  .append("Start Time,")
+	// 	  .append("Finish Time,")
+	// 	  .append("Cloudlet Length,Processing Cost,File Size,")
+	// 	  .append("CPU Utilization,RAM Utilization,BW Utilization,Waiting Time\n");
 		  
 	
-		for (Vm vm : list) {
-			sb.append(vm.getId());
-			sb.append(vm.get)
+	// 	for (Vm vm : list) {
+	// 		sb.append(vm.getId());
+	// 		sb.append(vm.get);
 
-		}
+	// 	}
 	
-		try (FileWriter writer = new FileWriter(filePath)) {
-			writer.write(sb.toString());
-			System.out.println("Cloudlet results saved to " + filePath);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	// 	try (FileWriter writer = new FileWriter(filePath)) {
+	// 		writer.write(sb.toString());
+	// 		System.out.println("Cloudlet results saved to " + filePath);
+	// 	} catch (IOException e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 }

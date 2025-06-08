@@ -102,6 +102,7 @@ public class baselineMultiDatacenterHomogenous {
 		Log.println("Starting baselineSingularDatacenter...");
 
 		try {
+			simulationParameters sp = new simulationParameters();
 			// First step: Initialize the CloudSim package. It should be called
 			// before creating any entities.
 			int num_user = 1;   // number of grid users
@@ -113,20 +114,17 @@ public class baselineMultiDatacenterHomogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = simulationParameters.createDatacenter("Datacenter_0", 2, 1000, 0.8);
-			Datacenter datacenter1 = simulationParameters.createDatacenter("Datacenter_1", 4, 1200, 1.1);
-			Datacenter datacenter2 = simulationParameters.createDatacenter("Datacenter_2", 2, 900, 1);
+			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 0.8);
+			Datacenter datacenter1 = sp.createDatacenter("Datacenter_1", 4, sp.bw+200, 1.2);
+			Datacenter datacenter2 = sp.createDatacenter("Datacenter_2", 2, sp.bw-200, 1);
+			Datacenter datacenter3 = sp.createDatacenter("Datacenter_3", 4, sp.bw-200, 3);
 
 			//Third step: Create Broker
 			broker = new DatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			//Fourth step: Create VMs and Cloudlets and send them to broker
-			int datacenterAmount = 3;
-			int totalCloudlets = 1000;
-
-			vmlist = createVM(brokerId,18);
-			cloudletList = createCloudlet(brokerId,totalCloudlets); 	
+			vmlist = createVM(brokerId,24);
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 	
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -141,7 +139,7 @@ public class baselineMultiDatacenterHomogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			simulationParameters.writeCloudletListToCSV(newList, path + "baselineMultiDatacenterHomogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "baselineMultiDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
