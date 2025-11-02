@@ -24,7 +24,7 @@ public class simulationParameters {
 	public int cloudletNumber = 5000;
 	public int bw = 1500;
 
-	public Datacenter createDatacenter(String name, int hostNumber, int bw, double cost_multiplier){
+	public Datacenter createDatacenter(String name, int hostCount, int bw, double cost_multiplier){
 
 		// Here are the steps needed to create a PowerDatacenter:
 		// 1. We need to create a list to store one or more
@@ -42,7 +42,7 @@ public class simulationParameters {
 		long storage = 1000000; //host storage
 		//int bw = 10000;
 
-		for (int i = 0; hostNumber > i; i++){
+		for (int i = 0; hostCount > i; i++){
 			List<Pe> peList = new ArrayList<>();
 			for(int j = 0; PeNumber > j; j++){
 				peList.add(new Pe(j, new PeProvisionerSimple(mips)));

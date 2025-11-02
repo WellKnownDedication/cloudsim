@@ -8,7 +8,7 @@
  */
 
 
-package homogenous.roundRobin;
+package environments.homogenous.geneticAlgorythm;
 
 import technicals.simulationParameters;
 
@@ -39,13 +39,14 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import brokers.GeneticAlgorithm.GeneticAlgorithmDatacenterBroker;
 import brokers.RoundRobin.RoundRobinDatacenterBroker;
 
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class roundRobinSingularDatacenterHomogenous {
+public class GASingularDatacenterHomogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -119,14 +120,11 @@ public class roundRobinSingularDatacenterHomogenous {
 			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
 
 			//Third step: Create Broker
-			broker = new RoundRobinDatacenterBroker("Broker");;
+			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			//Fourth step: Create VMs and Cloudlets and send them to broker
-			int totalCloudlets = 1000;
-
-			vmlist = createVM(brokerId,4); 
-			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 	
+			vmlist = createVM(brokerId,4);
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber);
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -141,7 +139,7 @@ public class roundRobinSingularDatacenterHomogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			sp.writeCloudletListToCSV(newList, path + "roundRobinSingularDatacenterHomogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "GASingularDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -151,7 +149,74 @@ public class roundRobinSingularDatacenterHomogenous {
 			Log.println("The simulation has been terminated due to an unexpected error");
 		}
 	}
-	
+
+	private static Datacenter createDatacenter(String name, int hostNumber, double cost_multiplier){
+
+		// Here are the steps needed to create a PowerDatacenter:
+		// 1. We need to create a list to store one or more
+		//    Machines
+		List<Host> hostList = new ArrayList<>();
+
+		//int hostNumber = 2;
+		int PeNumber = hostNumber*4;
+
+		int mips = 1000;
+
+		//4. Create Hosts with its id and list of PEs and add them to the list of machines
+		int hostId=0;
+		int ram = 4000; //host memory (MB)
+		long storage = 1000000; //host storage
+		int bw = 10000;
+
+		for (int i = 0; hostNumber > i; i++){
+			List<Pe> peList = new ArrayList<>();
+			for(int j = 0; PeNumber > j; j++){
+				peList.add(new Pe(j, new PeProvisionerSimple(mips)));
+			}
+
+			hostList.add(
+    			new Host(
+    				hostId,
+    				new RamProvisionerSimple(ram),
+    				new BwProvisionerSimple(bw),
+    				storage,
+    				peList,
+    				new VmSchedulerTimeShared(peList)
+    			)
+    		); 
+
+			hostId++;
+		}
+
+		// 5. Create a DatacenterCharacteristics object that stores the
+		//    properties of a data center: architecture, OS, list of
+		//    Machines, allocation policy: time- or space-shared, time zone
+		//    and its price (G$/Pe time unit).
+		String arch = "x86";      // system architecture
+		String os = "Linux";          // operating system
+		String vmm = "Xen";
+		double time_zone = 10.0;         // time zone this resource located
+		double cost = 3.0 * cost_multiplier;              // the cost of using processing in this resource
+		double costPerMem = 0.05 * cost_multiplier;		// the cost of using memory in this resource
+		double costPerStorage = 0.1 * cost_multiplier;	// the cost of using storage in this resource
+		double costPerBw = 0.1 * cost_multiplier;			// the cost of using bw in this resource
+		LinkedList<Storage> storageList = new LinkedList<>();	//we are not adding SAN devices by now
+
+		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
+                arch, os, vmm, hostList, time_zone, cost, costPerMem, costPerStorage, costPerBw);
+
+
+		// 6. Finally, we need to create a PowerDatacenter object.
+		Datacenter datacenter = null;
+		try {
+			datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return datacenter;
+	}
+
 	/**
 	 * Prints the Cloudlet objects
 	 * @param list  list of Cloudlets
@@ -180,5 +245,4 @@ public class roundRobinSingularDatacenterHomogenous {
         }
 
 	}
-
 }

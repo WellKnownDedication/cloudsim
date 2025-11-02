@@ -8,7 +8,7 @@
  */
 
 
-package heterogenous.baseline;
+package environments.heterogenous.baseline;
 
 import technicals.simulationParameters;
 
@@ -74,7 +74,7 @@ public class baselineMultiDatacenterHeterogenous {
 		return list;
 	}
 
-
+	
 	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
 		// Creates a container to store Cloudlets
 		List<Cloudlet> list = new ArrayList<>();

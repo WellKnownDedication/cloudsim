@@ -8,7 +8,7 @@
  */
 
 
-package heterogenous.roundRobin;
+package environments.homogenous.baseline;
 
 import technicals.simulationParameters;
 
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -32,7 +31,6 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
-import org.cloudbus.cloudsim.UtilizationModelStochastic;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
@@ -45,7 +43,7 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  * An example showing how to create
  * scalable simulations.
  */
-public class roundRobinMultiDatacenterHeterogenous {
+public class baselineMultiDatacenterHomogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -78,16 +76,15 @@ public class roundRobinMultiDatacenterHeterogenous {
 	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
 		// Creates a container to store Cloudlets
 		List<Cloudlet> list = new ArrayList<>();
-		Random rand = new Random();
 
 		//cloudlet parameters
+		long length = 4000;
+		long fileSize = 500;
+		long outputSize = 400;
+		int pesNumber = 2;
+		UtilizationModel utilizationModel = new UtilizationModelFull();
 
 		for(int i=0;i<cloudlets;i++){
-			long length = 1000 + rand.nextInt(19000);;
-			long fileSize = 300 + rand.nextInt(700); 
-			long outputSize = 300 + rand.nextInt(700);
-			int pesNumber = 1 + rand.nextInt(2);
-			UtilizationModel utilizationModel = new UtilizationModelStochastic();
 			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
 			list.getLast().setUserId(userId);
 		}
@@ -127,7 +124,7 @@ public class roundRobinMultiDatacenterHeterogenous {
 			int brokerId = broker.getId();
 
 			vmlist = createVM(brokerId,24);
-			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 	
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -142,7 +139,7 @@ public class roundRobinMultiDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			sp.writeCloudletListToCSV(newList, path + "roundRobinMultiDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "baselineMultiDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -248,4 +245,6 @@ public class roundRobinMultiDatacenterHeterogenous {
         }
 
 	}
+
+
 }
