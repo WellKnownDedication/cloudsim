@@ -134,33 +134,50 @@ public class simulationParameters {
 		}
 	}
 
-	// public static void writeVMListToCSV(List<Vm> list, String filePath) {
-	// 	StringBuilder sb = new StringBuilder();
-	// 	DecimalFormat dft = new DecimalFormat("###.##");
-	
-	// 	// Header
-	// 	sb.append("Cloudlet ID,")
-	// 	  .append("User ID,")
-	// 	  .append("Status,")
-	// 	  .append("Data Center ID,")
-	// 	  .append("Submission Time,")
-	// 	  .append("Start Time,")
-	// 	  .append("Finish Time,")
-	// 	  .append("Cloudlet Length,Processing Cost,File Size,")
-	// 	  .append("CPU Utilization,RAM Utilization,BW Utilization,Waiting Time\n");
-		  
-	
-	// 	for (Vm vm : list) {
-	// 		sb.append(vm.getId());
-	// 		sb.append(vm.get);
+	public void writeVmListToCSV(List<Vm> list, String filePath) {
+    StringBuilder sb = new StringBuilder();
 
-	// 	}
-	
-	// 	try (FileWriter writer = new FileWriter(filePath)) {
-	// 		writer.write(sb.toString());
-	// 		System.out.println("Cloudlet results saved to " + filePath);
-	// 	} catch (IOException e) {
-	// 		e.printStackTrace();
-	// 	}
-	// }
+    sb.append("VM ID,User ID,MIPS,PEs,RAM,BW,Size,CloudletScheduler\n");
+
+    for (Vm vm : list) {
+        sb.append(vm.getId()).append(",");
+        sb.append(vm.getUserId()).append(",");
+        sb.append(vm.getMips()).append(",");
+        sb.append(vm.getNumberOfPes()).append(",");
+        sb.append(vm.getRam()).append(",");
+        sb.append(vm.getBw()).append(",");
+        sb.append(vm.getSize()).append(",");
+        sb.append(vm.getCloudletScheduler().getClass().getSimpleName()).append("\n");
+    }
+
+    try (FileWriter writer = new FileWriter(filePath)) {
+        writer.write(sb.toString());
+        System.out.println("VM results saved to " + filePath);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+	}
+
+	public void writeHostListToCSV(List<Host> list, String filePath) {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("Host ID,PEs,MIPS,Total RAM,Total BW,Storage\n");
+
+    for (Host host : list) {
+        sb.append(host.getId()).append(",");
+        sb.append(host.getNumberOfPes()).append(",");
+        sb.append(host.getTotalMips()).append(",");
+        sb.append(host.getRam()).append(",");
+        sb.append(host.getBw()).append(",");
+        sb.append(host.getStorage()).append("\n");
+    }
+
+    try (FileWriter writer = new FileWriter(filePath)) {
+        writer.write(sb.toString());
+        System.out.println("Host results saved to " + filePath);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
 }
