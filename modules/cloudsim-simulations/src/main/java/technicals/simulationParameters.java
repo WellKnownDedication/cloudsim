@@ -146,8 +146,7 @@ public class simulationParameters {
         sb.append(vm.getNumberOfPes()).append(",");
         sb.append(vm.getRam()).append(",");
         sb.append(vm.getBw()).append(",");
-        sb.append(vm.getSize()).append(",");
-        sb.append(vm.getCloudletScheduler().getClass().getSimpleName()).append("\n");
+        sb.append(vm.getSize()).append("\n");
     }
 
     try (FileWriter writer = new FileWriter(filePath)) {
