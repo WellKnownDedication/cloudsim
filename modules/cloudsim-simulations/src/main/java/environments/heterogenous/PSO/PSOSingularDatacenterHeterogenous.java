@@ -125,8 +125,8 @@ public class PSOSingularDatacenterHeterogenous {
 			broker = new PSODatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			vmlist = createVM(brokerId,4); //creating 20 vms
-			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); // creating 40 cloudlets	
+			vmlist = createVM(brokerId,4);
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber);
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
