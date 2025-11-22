@@ -98,8 +98,6 @@ public class GASingularDatacenterHeterogenous {
 	}
 
 
-	////////////////////////// STATIC METHODS ///////////////////////
-
 	/**
 	 * Creates main() to run this example
 	 */
