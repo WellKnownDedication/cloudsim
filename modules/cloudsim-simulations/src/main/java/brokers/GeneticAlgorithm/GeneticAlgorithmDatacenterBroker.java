@@ -14,7 +14,6 @@ public class GeneticAlgorithmDatacenterBroker extends DatacenterBroker {
         super(name);
     }
 
-
     public void runGeneticAlgorithm() {
 
         List<Cloudlet> sortedList = new ArrayList<>(getCloudletList());

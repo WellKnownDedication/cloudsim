@@ -6,13 +6,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
+import org.cloudbus.cloudsim.UtilizationModel;
+import org.cloudbus.cloudsim.UtilizationModelStochastic;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
@@ -24,7 +28,7 @@ public class simulationParameters {
 	public int cloudletNumber = 5000;
 	public int bw = 1500;
 
-	public Datacenter createDatacenter(String name, int hostCount, int bw, double cost_multiplier){
+	public static Datacenter createDatacenter(String name, int hostCount, int bw, double cost_multiplier){
 
 		// Here are the steps needed to create a PowerDatacenter:
 		// 1. We need to create a list to store one or more
@@ -91,7 +95,7 @@ public class simulationParameters {
 		return datacenter;
 	}
     
-    public void writeCloudletListToCSV(List<Cloudlet> list, String filePath) {
+    public static void writeCloudletListToCSV(List<Cloudlet> list, String filePath) {
 		StringBuilder sb = new StringBuilder();
 		DecimalFormat dft = new DecimalFormat("###.##");
 	
@@ -134,7 +138,7 @@ public class simulationParameters {
 		}
 	}
 
-	public void writeVmListToCSV(List<Vm> list, String filePath) {
+	public static void writeVmListToCSV(List<Vm> list, String filePath) {
     StringBuilder sb = new StringBuilder();
 
     sb.append("VM ID,User ID,MIPS,PEs,RAM,BW,Size,CloudletScheduler\n");
@@ -157,7 +161,7 @@ public class simulationParameters {
     }
 	}
 
-	public void writeHostListToCSV(List<Host> list, String filePath) {
+	public static void writeHostListToCSV(List<Host> list, String filePath) {
     StringBuilder sb = new StringBuilder();
 
     sb.append("Host ID,PEs,MIPS,Total RAM,Total BW,Storage\n");
@@ -177,6 +181,41 @@ public class simulationParameters {
     } catch (IOException e) {
         e.printStackTrace();
     }
-}
+	}
+
+	private static List<Vm> createVM(int userId, final int vms) {
+		//Creates a container to store VMs. This list is passed to the broker later
+		List<Vm> list = new ArrayList<>();
+
+		//VM Parameters
+		long size = 10000; //image size (MB)
+		int ram = 512; //vm memory (MB)
+		int mips = 1000;
+		long bw = 1000;
+		int pesNumber = 2; //number of cpus
+		String vmm = "Xen"; //VMM name
+
+		//create VMs
+		for(int i=0;i<vms;i++){
+			list.add(new Vm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
+		}
+
+		return list;
+	}
+
+	private static List<Vm> createVM(int userId, final int vms, long size, int ram, int mips, long bw, int pesNumber) {
+		//Creates a container to store VMs. This list is passed to the broker later
+		List<Vm> list = new ArrayList<>();
+
+		//VM Parameters
+		String vmm = "Xen"; //VMM name
+
+		//create VMs
+		for(int i=0;i<vms;i++){
+			list.add(new Vm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
+		}
+
+		return list;
+	}
 
 }

@@ -25,8 +25,8 @@ public class PSODatacenterBroker extends DatacenterBroker {
         // ---------------------------
         // PSO PARAMETERS
         // ---------------------------
-        int NUM_PARTICLES = 20;
-        int MAX_ITER = 50;
+        int NUM_PARTICLES = 25;
+        int MAX_ITER = 25;
 
         double w = 0.7;    // inertia weight
         double c1 = 1.4;   // cognitive coefficient

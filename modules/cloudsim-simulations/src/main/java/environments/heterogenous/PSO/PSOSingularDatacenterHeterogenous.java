@@ -128,7 +128,6 @@ public class PSOSingularDatacenterHeterogenous {
 			vmlist = createVM(brokerId,4); //creating 20 vms
 			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); // creating 40 cloudlets	
 
-
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
 
@@ -142,7 +141,7 @@ public class PSOSingularDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			sp.writeCloudletListToCSV(newList, path + "baselineSingularDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "PSOSingularDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
