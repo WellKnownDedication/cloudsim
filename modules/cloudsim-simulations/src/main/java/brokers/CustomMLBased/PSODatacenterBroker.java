@@ -133,12 +133,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
         return sum;
     }
 
-    // @Override
-    // public void submitCloudletList(List<? extends Cloudlet> list) {
-    //     getCloudletList().addAll(list);
-    //     //runPSO();
-    // }
-
     @Override
     protected void submitCloudlets() {
         runPSO();

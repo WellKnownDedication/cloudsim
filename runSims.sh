@@ -7,22 +7,22 @@ mvn clean compile -pl modules/cloudsim-simulations/
 mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.PSO.PSOSingularDatacenterHeterogenous 
 
 # # Baseline with built-in datacenter brokers
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=homogenous.baseline.baselineSingularDatacenterHomogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=homogenous.baseline.baselineMultiDatacenterHomogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.baseline.baselineSingularDatacenterHomogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.baseline.baselineMultiDatacenterHomogenous
 
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=heterogenous.baseline.baselineSingularDatacenterHeterogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=heterogenous.baseline.baselineMultiDatacenterHeterogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.baseline.baselineSingularDatacenterHeterogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.baseline.baselineMultiDatacenterHeterogenous
 
 # # RoundRobin datacenter Brockers
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=homogenous.roundRobin.roundRobinSingularDatacenterHomogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=homogenous.roundRobin.roundRobinMultiDatacenterHomogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.roundRobin.roundRobinSingularDatacenterHomogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.roundRobin.roundRobinMultiDatacenterHomogenous
 
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=heterogenous.roundRobin.roundRobinSingularDatacenterHeterogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=heterogenous.roundRobin.roundRobinMultiDatacenterHeterogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.roundRobin.roundRobinSingularDatacenterHeterogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.roundRobin.roundRobinMultiDatacenterHeterogenous
 
 # # GeneticAlgorythm datacenter Brockers
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=homogenous.geneticAlgorythm.GASingularDatacenterHomogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=homogenous.geneticAlgorythm.GAMultiDatacenterHomogenous
+# mvn exec:java -X -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.geneticAlgorythm.GASingularDatacenterHomogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.geneticAlgorythm.GAMultiDatacenterHomogenous
 
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=heterogenous.geneticAlgorythm.GASingularDatacenterHeterogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=heterogenous.geneticAlgorythm.GAMultiDatacenterHeterogenous
+mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.geneticAlgorythm.GASingularDatacenterHeterogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=henvironments.eterogenous.geneticAlgorythm.GAMultiDatacenterHeterogenous
