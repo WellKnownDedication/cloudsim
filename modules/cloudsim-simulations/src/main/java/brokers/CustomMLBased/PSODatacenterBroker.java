@@ -22,9 +22,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
         int numCloudlets = cloudlets.size();
         int numVms = vms.size();
 
-        // ---------------------------
         // PSO PARAMETERS
-        // ---------------------------
         int NUM_PARTICLES = 25;
         int MAX_ITER = 25;
 
@@ -34,9 +32,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
         Random rand = new Random();
 
-        // ---------------------------
         // PARTICLE STRUCTURES
-        // ---------------------------
         int[][] particles = new int[NUM_PARTICLES][numCloudlets];
         double[][] velocities = new double[NUM_PARTICLES][numCloudlets];
 
@@ -48,9 +44,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
         int[] gbest = new int[numCloudlets];
         double gbestScore = Double.MAX_VALUE;
 
-        // ---------------------------
         // INITIALIZATION
-        // ---------------------------
         for (int p = 0; p < NUM_PARTICLES; p++) {
 
             for (int i = 0; i < numCloudlets; i++) {
@@ -69,9 +63,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
             }
         }
 
-        // ---------------------------
         // PSO MAIN LOOP
-        // ---------------------------
         for (int iter = 0; iter < MAX_ITER; iter++) {
             for (int p = 0; p < NUM_PARTICLES; p++) {
 
@@ -110,9 +102,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
             }
         }
 
-        // ---------------------------
         // APPLY BEST SOLUTION
-        // ---------------------------
         List<Cloudlet> finalCloudletList = new ArrayList<>();
         List<Vm> finalVmList = new ArrayList<>();
 
@@ -128,9 +118,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
         getCloudletList().addAll(finalCloudletList);
     }
 
-    // -------------------------------------------
-    // FITNESS FUNCTION (MINIMIZE TOTAL EXEC TIME)
-    // -------------------------------------------
     private double computeFitness(int[] mapping, List<Cloudlet> cl, List<Vm> vm) {
         double sum = 0.0;
 
@@ -152,6 +139,13 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
     @Override
     protected void submitCloudlets() {
-        
+        List<Cloudlet> successfullySubmitted = new ArrayList<>();
+		for (Cloudlet cloudlet : getCloudletList()) {
+            getCloudletSubmittedList().add(cloudlet);
+			successfullySubmitted.add(cloudlet);
+		}
+
+		// remove submitted cloudlets from waiting list
+		getCloudletList().removeAll(successfullySubmitted);
     }
 }
