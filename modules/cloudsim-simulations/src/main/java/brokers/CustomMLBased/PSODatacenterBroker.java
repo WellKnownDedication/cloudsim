@@ -3,6 +3,8 @@ package brokers.CustomMLBased;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Vm;
+import org.cloudbus.cloudsim.core.CloudActionTags;
+import org.cloudbus.cloudsim.core.CloudSimTags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,20 +133,16 @@ public class PSODatacenterBroker extends DatacenterBroker {
         return sum;
     }
 
-    @Override
-    public void submitCloudletList(List<? extends Cloudlet> list) {
-        getCloudletList().addAll(list);
-        //runPSO();
-    }
+    // @Override
+    // public void submitCloudletList(List<? extends Cloudlet> list) {
+    //     getCloudletList().addAll(list);
+    //     //runPSO();
+    // }
 
     @Override
     protected void submitCloudlets() {
-        List<Cloudlet> successfullySubmitted = new ArrayList<>();
-		for (Cloudlet cloudlet : getCloudletList()) {
-            getCloudletSubmittedList().add(cloudlet);
-			successfullySubmitted.add(cloudlet);
-		}
-
-		getCloudletList().removeAll(successfullySubmitted);
+        runPSO();
+        super.submitCloudlets();
     }
+
 }
