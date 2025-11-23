@@ -3,12 +3,8 @@ package brokers.CustomMLBased;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Vm;
-import org.cloudbus.cloudsim.core.CloudActionTags;
-import org.cloudbus.cloudsim.core.CloudSimTags;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class PSODatacenterBroker extends DatacenterBroker {
 
@@ -16,46 +12,104 @@ public class PSODatacenterBroker extends DatacenterBroker {
         super(name);
     }
 
-    public void runPSO() {
+    @Override
+    protected void submitCloudlets() {
+        runDiscretePSO();
+        super.submitCloudlets();
+    }
+
+    public void runDiscretePSO() {
 
         List<Cloudlet> cloudlets = new ArrayList<>(getCloudletList());
-        List<Vm> vms = new ArrayList<>((List<Vm>)(List<?>)getGuestList());
-
         int numCloudlets = cloudlets.size();
-        int numVms = vms.size();
+
+        for(int i=0;i<numCloudlets;i++){
+            Cloudlet tmp = cloudlets.get(i);
+            int idx = i;
+            for(int j=i+1;j<numCloudlets;j++)
+            {
+                if(cloudlets.get(j).getCloudletLength() < tmp.getCloudletLength())
+                {
+                    idx = j;
+                    tmp = cloudlets.get(j);
+                }
+            }
+            Cloudlet tmp2 = cloudlets.get(i);
+            cloudlets.set(i, tmp);
+            cloudlets.set(idx,tmp2);
+        }
+
+        // List<Vm> vms = new ArrayList<>((List<Vm>)(List<?>)getGuestList());
+        // int numVms = vms.size();
+
+        // ArrayList<Vm> toBeUsedVm = new ArrayList<Vm>();
+        // ArrayList<Vm> leftOutVm = new ArrayList<Vm>();
+
+        List<Vm> vms = new ArrayList<>((List<Vm>)(List<?>)getGuestList());
+        //ArrayList<Vm> sortedListVm = new ArrayList<Vm>(vms);
+
+        int numVms=vms.size();
+
+        for(int i=0;i<numVms;i++){
+            Vm tmp=vms.get(i);
+            int idx=i;
+            // if(i<numCloudlets)
+            //     toBeUsedVm.add(tmp);
+            // else
+            //     leftOutVm.add(tmp);
+            for(int j=i+1;j<numVms;j++)
+            {
+                if(vms.get(j).getMips()>tmp.getMips())
+                {
+                    idx=j;
+                    tmp=vms.get(j);
+                }
+            }
+            Vm tmp2 = vms.get(i);
+            vms.set(i, tmp);
+            vms.set(idx,tmp2);
+        }
 
         // PSO PARAMETERS
-        int NUM_PARTICLES = 25;
-        int MAX_ITER = 25;
+        int NUM_PARTICLES = 30;
+        int MAX_ITER = 40;
 
-        double w = 0.7;    // inertia weight
-        double c1 = 1.4;   // cognitive coefficient
-        double c2 = 1.4;   // social coefficient
+        double w = 0.4;      // inertia
+        double c1 = 1.3;     // personal influence
+        double c2 = 1.3;     // global influence
 
         Random rand = new Random();
 
-        // PARTICLE STRUCTURES
-        int[][] particles = new int[NUM_PARTICLES][numCloudlets];
-        double[][] velocities = new double[NUM_PARTICLES][numCloudlets];
+        // --- PARTICLES: probability matrix ---
+        // prob[p][cloudlet][vmIndex]
+        double[][][] prob = new double[NUM_PARTICLES][numCloudlets][numVms];
 
-        // personal best
+        // Particles' actual VM assignment indices (sampled from prob)
+        int[][] particles = new int[NUM_PARTICLES][numCloudlets];
+
+        // pbest (best assignments seen by each particle)
         int[][] pbest = new int[NUM_PARTICLES][numCloudlets];
         double[] pbestScore = new double[NUM_PARTICLES];
 
-        // global best
+        // gbest (best assignment in whole swarm)
         int[] gbest = new int[numCloudlets];
         double gbestScore = Double.MAX_VALUE;
 
         // INITIALIZATION
         for (int p = 0; p < NUM_PARTICLES; p++) {
 
+            // Initialize uniform probability distribution
             for (int i = 0; i < numCloudlets; i++) {
-                // Random VM assignment
-                particles[p][i] = rand.nextInt(numVms);
-                velocities[p][i] = 0.0;
+                for (int v = 0; v < numVms; v++) {
+                    prob[p][i][v] = 1.0 / numVms;
+                }
+
+                // sample an initial assignment
+                particles[p][i] = sampleFromDistribution(prob[p][i], rand);
                 pbest[p][i] = particles[p][i];
             }
 
+            // compute fitness
             double score = computeFitness(particles[p], cloudlets, vms);
             pbestScore[p] = score;
 
@@ -67,36 +121,40 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
         // PSO MAIN LOOP
         for (int iter = 0; iter < MAX_ITER; iter++) {
+
             for (int p = 0; p < NUM_PARTICLES; p++) {
 
                 for (int i = 0; i < numCloudlets; i++) {
 
-                    double r1 = rand.nextDouble();
-                    double r2 = rand.nextDouble();
+                    // Convert pbest and gbest to one-hot vectors
+                    double[] pbestOneHot = oneHot(pbest[p][i], numVms);
+                    double[] gbestOneHot = oneHot(gbest[i], numVms);
 
-                    // velocity update
-                    velocities[p][i] = w * velocities[p][i]
-                            + c1 * r1 * (pbest[p][i] - particles[p][i])
-                            + c2 * r2 * (gbest[i] - particles[p][i]);
+                    // Update probability vector
+                    for (int v = 0; v < numVms; v++) {
+                        prob[p][i][v] =
+                                w * prob[p][i][v]
+                                        + c1 * rand.nextDouble() * pbestOneHot[v]
+                                        + c2 * rand.nextDouble() * gbestOneHot[v];
+                    }
 
-                    // position update (VM index)
-                    particles[p][i] += (int) Math.round(velocities[p][i]);
+                    // Normalize
+                    normalize(prob[p][i]);
 
-                    // enforce bounds
-                    if (particles[p][i] < 0) particles[p][i] = 0;
-                    if (particles[p][i] >= numVms) particles[p][i] = numVms - 1;
+                    // Resample new VM assignment
+                    particles[p][i] = sampleFromDistribution(prob[p][i], rand);
                 }
 
-                // evaluate fitness
+                // Evaluate fitness
                 double score = computeFitness(particles[p], cloudlets, vms);
 
-                // update personal best
+                // Update personal best
                 if (score < pbestScore[p]) {
                     pbestScore[p] = score;
                     System.arraycopy(particles[p], 0, pbest[p], 0, numCloudlets);
                 }
 
-                // update global best
+                // Update global best
                 if (score < gbestScore) {
                     gbestScore = score;
                     System.arraycopy(particles[p], 0, gbest, 0, numCloudlets);
@@ -104,7 +162,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
             }
         }
 
-        // APPLY BEST SOLUTION
+        // APPLY BEST ASSIGNMENT
         List<Cloudlet> finalCloudletList = new ArrayList<>();
         List<Vm> finalVmList = new ArrayList<>();
 
@@ -115,7 +173,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
         getGuestList().clear();
         getCloudletList().clear();
-
         getGuestList().addAll(finalVmList);
         getCloudletList().addAll(finalCloudletList);
     }
@@ -123,20 +180,55 @@ public class PSODatacenterBroker extends DatacenterBroker {
     private double computeFitness(int[] mapping, List<Cloudlet> cl, List<Vm> vm) {
         double sum = 0.0;
 
+        int numVms = vm.size();
+        int[] loads = new int[numVms];
+
         for (int i = 0; i < mapping.length; i++) {
             Cloudlet c = cl.get(i);
             Vm v = vm.get(mapping[i]);
 
-            double execTime = c.getCloudletLength() / v.getMips();
-            sum += execTime;
+            sum += c.getCloudletLength() / v.getMips();
+            loads[mapping[i]]++;
         }
-        return sum;
+
+        // Load balancing penalty
+        double penalty = 0;
+        double alpha = 2.0;  // penalty strength (tuneable)
+
+        for (int l : loads) {
+            penalty += alpha * (l * l);
+        }
+
+        return sum + penalty;
     }
 
-    @Override
-    protected void submitCloudlets() {
-        runPSO();
-        super.submitCloudlets();
+    private void normalize(double[] arr) {
+        double sum = 0;
+        for (double x : arr) sum += x;
+        if (sum == 0) {
+            double uniform = 1.0 / arr.length;
+            Arrays.fill(arr, uniform);
+            return;
+        }
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] /= sum;
+        }
     }
 
+    private double[] oneHot(int index, int length) {
+        double[] vec = new double[length];
+        vec[index] = 1.0;
+        return vec;
+    }
+
+    private int sampleFromDistribution(double[] prob, Random rand) {
+        double r = rand.nextDouble();
+        double cumulative = 0;
+
+        for (int i = 0; i < prob.length; i++) {
+            cumulative += prob[i];
+            if (r <= cumulative) return i;
+        }
+        return prob.length - 1; // fallback
+    }
 }
