@@ -145,7 +145,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
 			successfullySubmitted.add(cloudlet);
 		}
 
-		// remove submitted cloudlets from waiting list
 		getCloudletList().removeAll(successfullySubmitted);
     }
 }
