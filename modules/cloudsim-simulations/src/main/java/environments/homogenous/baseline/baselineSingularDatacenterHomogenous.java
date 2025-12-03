@@ -72,7 +72,6 @@ public class baselineSingularDatacenterHomogenous {
 		return list;
 	}
 
-
 	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
 		// Creates a container to store Cloudlets
 		List<Cloudlet> list = new ArrayList<>();
@@ -92,12 +91,6 @@ public class baselineSingularDatacenterHomogenous {
 		return list;
 	}
 
-
-	////////////////////////// STATIC METHODS ///////////////////////
-
-	/**
-	 * Creates main() to run this example
-	 */
 	public static void main(String[] args) {
 		Log.println("Starting baselineSingularDatacenter...");
 
@@ -145,35 +138,6 @@ public class baselineSingularDatacenterHomogenous {
 			e.printStackTrace();
 			Log.println("The simulation has been terminated due to an unexpected error");
 		}
-	}
-
-	/**
-	 * Prints the Cloudlet objects
-	 * @param list  list of Cloudlets
-	 */
-	private static void printCloudletList(List<Cloudlet> list) {
-		Cloudlet cloudlet;
-
-		String indent = "    ";
-		Log.println();
-		Log.println("========== OUTPUT ==========");
-		Log.println("Cloudlet ID" + indent + "STATUS" + indent +
-				"Data center ID" + indent + "VM ID" + indent + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
-
-		DecimalFormat dft = new DecimalFormat("###.##");
-        for (Cloudlet value : list) {
-            cloudlet = value;
-            Log.print(indent + cloudlet.getCloudletId() + indent + indent);
-
-            if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
-                Log.print("SUCCESS");
-
-                Log.println(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getGuestId() +
-                        indent + indent + indent + dft.format(cloudlet.getActualCPUTime()) +
-                        indent + indent + dft.format(cloudlet.getExecStartTime()) + indent + indent + indent + dft.format(cloudlet.getExecFinishTime()));
-            }
-        }
-
 	}
 
 }

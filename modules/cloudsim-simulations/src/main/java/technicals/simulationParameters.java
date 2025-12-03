@@ -38,11 +38,11 @@ public class simulationParameters {
 		//int hostNumber = 2;
 		int PeNumber = 8;
 
-		int mips = 1000;
+		int mips = 8000;
 
 		//4. Create Hosts with its id and list of PEs and add them to the list of machines
 		int hostId=0;
-		int ram = 4000; //host memory (MB)
+		int ram = 16000; //host memory (MB)
 		long storage = 1000000; //host storage
 		//int bw = 10000;
 

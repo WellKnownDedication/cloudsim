@@ -104,7 +104,7 @@ public class PSOSingularDatacenterHeterogenous {
 	 * Creates main() to run this example
 	 */
 	public static void main(String[] args) {
-		Log.println("Starting baselineSingularDatacenter...");
+		Log.println("Starting PSOSingularDatacenter...");
 
 		try {
 			simulationParameters sp = new simulationParameters();
@@ -143,7 +143,7 @@ public class PSOSingularDatacenterHeterogenous {
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
 			sp.writeCloudletListToCSV(newList, path + "PSOSingularDatacenterHeterogenous.csv");
 
-			Log.println("CloudSimExample6 finished!");
+			Log.println("PSO finished!");
 		}
 		catch (Exception e)
 		{

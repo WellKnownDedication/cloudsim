@@ -8,7 +8,7 @@
  */
 
 
-package environments.heterogenous.baseline;
+package environments.homogenous.PSO;
 
 import technicals.simulationParameters;
 
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.CloudletSchedulerSpaceShared;
@@ -32,7 +31,6 @@ import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
-import org.cloudbus.cloudsim.UtilizationModelStochastic;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.VmSchedulerTimeShared;
@@ -41,11 +39,13 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import brokers.CustomMLBased.PSODatacenterBroker;
+
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class baselineSingularDatacenterHeterogenous {
+public class PSOSingularDatacenterHomogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -73,20 +73,20 @@ public class baselineSingularDatacenterHeterogenous {
 
 		return list;
 	}
-	
+
+
 	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
 		// Creates a container to store Cloudlets
 		List<Cloudlet> list = new ArrayList<>();
-		Random rand = new Random();
 
 		//cloudlet parameters
+		long length = 4000;
+		long fileSize = 500;
+		long outputSize = 400;
+		int pesNumber = 2;
+		UtilizationModel utilizationModel = new UtilizationModelFull();
 
 		for(int i=0;i<cloudlets;i++){
-			long length = 1000 + rand.nextInt(19000);;
-			long fileSize = 300 + rand.nextInt(700); 
-			long outputSize = 300 + rand.nextInt(700);
-			int pesNumber = 1 + rand.nextInt(2);
-			UtilizationModel utilizationModel = new UtilizationModelStochastic();
 			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
 			list.getLast().setUserId(userId);
 		}
@@ -94,8 +94,14 @@ public class baselineSingularDatacenterHeterogenous {
 		return list;
 	}
 
+
+	////////////////////////// STATIC METHODS ///////////////////////
+
+	/**
+	 * Creates main() to run this example
+	 */
 	public static void main(String[] args) {
-		Log.println("Starting baselineSingularDatacenter...");
+		Log.println("Starting PSOSingularDatacenter...");
 
 		try {
 			simulationParameters sp = new simulationParameters();
@@ -113,15 +119,11 @@ public class baselineSingularDatacenterHeterogenous {
 			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
 
 			//Third step: Create Broker
-			broker = new DatacenterBroker("Broker");;
+			broker = new PSODatacenterBroker("Broker");;
 			int brokerId = broker.getId();
-
-			//Fourth step: Create VMs and Cloudlets and send them to broker
-			int totalCloudlets = 1000;
 
 			vmlist = createVM(brokerId,4); //creating 20 vms
 			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); // creating 40 cloudlets	
-
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -136,7 +138,7 @@ public class baselineSingularDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			sp.writeCloudletListToCSV(newList, path + "baselineSingularDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "PSOSingularDatacenterHomogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -146,4 +148,34 @@ public class baselineSingularDatacenterHeterogenous {
 			Log.println("The simulation has been terminated due to an unexpected error");
 		}
 	}
+
+	/**
+	 * Prints the Cloudlet objects
+	 * @param list  list of Cloudlets
+	 */
+	private static void printCloudletList(List<Cloudlet> list) {
+		Cloudlet cloudlet;
+
+		String indent = "    ";
+		Log.println();
+		Log.println("========== OUTPUT ==========");
+		Log.println("Cloudlet ID" + indent + "STATUS" + indent +
+				"Data center ID" + indent + "VM ID" + indent + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
+
+		DecimalFormat dft = new DecimalFormat("###.##");
+        for (Cloudlet value : list) {
+            cloudlet = value;
+            Log.print(indent + cloudlet.getCloudletId() + indent + indent);
+
+            if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
+                Log.print("SUCCESS");
+
+                Log.println(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getGuestId() +
+                        indent + indent + indent + dft.format(cloudlet.getActualCPUTime()) +
+                        indent + indent + dft.format(cloudlet.getExecStartTime()) + indent + indent + indent + dft.format(cloudlet.getExecFinishTime()));
+            }
+        }
+
+	}
+
 }

@@ -39,24 +39,14 @@ public class PSODatacenterBroker extends DatacenterBroker {
             cloudlets.set(idx,tmp2);
         }
 
-        // List<Vm> vms = new ArrayList<>((List<Vm>)(List<?>)getGuestList());
-        // int numVms = vms.size();
-
-        // ArrayList<Vm> toBeUsedVm = new ArrayList<Vm>();
-        // ArrayList<Vm> leftOutVm = new ArrayList<Vm>();
-
         List<Vm> vms = new ArrayList<>((List<Vm>)(List<?>)getGuestList());
-        //ArrayList<Vm> sortedListVm = new ArrayList<Vm>(vms);
 
         int numVms=vms.size();
 
         for(int i=0;i<numVms;i++){
             Vm tmp=vms.get(i);
             int idx=i;
-            // if(i<numCloudlets)
-            //     toBeUsedVm.add(tmp);
-            // else
-            //     leftOutVm.add(tmp);
+
             for(int j=i+1;j<numVms;j++)
             {
                 if(vms.get(j).getMips()>tmp.getMips())
@@ -70,7 +60,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
             vms.set(idx,tmp2);
         }
 
-        // PSO PARAMETERS
         int NUM_PARTICLES = 30;
         int MAX_ITER = 40;
 
@@ -80,25 +69,18 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
         Random rand = new Random();
 
-        // --- PARTICLES: probability matrix ---
-        // prob[p][cloudlet][vmIndex]
         double[][][] prob = new double[NUM_PARTICLES][numCloudlets][numVms];
 
-        // Particles' actual VM assignment indices (sampled from prob)
         int[][] particles = new int[NUM_PARTICLES][numCloudlets];
 
-        // pbest (best assignments seen by each particle)
         int[][] pbest = new int[NUM_PARTICLES][numCloudlets];
         double[] pbestScore = new double[NUM_PARTICLES];
 
-        // gbest (best assignment in whole swarm)
         int[] gbest = new int[numCloudlets];
         double gbestScore = Double.MAX_VALUE;
 
-        // INITIALIZATION
         for (int p = 0; p < NUM_PARTICLES; p++) {
 
-            // Initialize uniform probability distribution
             for (int i = 0; i < numCloudlets; i++) {
                 for (int v = 0; v < numVms; v++) {
                     prob[p][i][v] = 1.0 / numVms;
@@ -109,7 +91,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
                 pbest[p][i] = particles[p][i];
             }
 
-            // compute fitness
             double score = computeFitness(particles[p], cloudlets, vms);
             pbestScore[p] = score;
 
@@ -119,7 +100,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
             }
         }
 
-        // PSO MAIN LOOP
         for (int iter = 0; iter < MAX_ITER; iter++) {
 
             for (int p = 0; p < NUM_PARTICLES; p++) {
@@ -138,23 +118,19 @@ public class PSODatacenterBroker extends DatacenterBroker {
                                         + c2 * rand.nextDouble() * gbestOneHot[v];
                     }
 
-                    // Normalize
                     normalize(prob[p][i]);
 
                     // Resample new VM assignment
                     particles[p][i] = sampleFromDistribution(prob[p][i], rand);
                 }
 
-                // Evaluate fitness
                 double score = computeFitness(particles[p], cloudlets, vms);
 
-                // Update personal best
                 if (score < pbestScore[p]) {
                     pbestScore[p] = score;
                     System.arraycopy(particles[p], 0, pbest[p], 0, numCloudlets);
                 }
 
-                // Update global best
                 if (score < gbestScore) {
                     gbestScore = score;
                     System.arraycopy(particles[p], 0, gbest, 0, numCloudlets);
@@ -162,7 +138,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
             }
         }
 
-        // APPLY BEST ASSIGNMENT
         List<Cloudlet> finalCloudletList = new ArrayList<>();
         List<Vm> finalVmList = new ArrayList<>();
 
@@ -191,7 +166,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
             loads[mapping[i]]++;
         }
 
-        // Load balancing penalty
         double penalty = 0;
         double alpha = 2.0;  // penalty strength (tuneable)
 
@@ -229,6 +203,6 @@ public class PSODatacenterBroker extends DatacenterBroker {
             cumulative += prob[i];
             if (r <= cumulative) return i;
         }
-        return prob.length - 1; // fallback
+        return prob.length - 1;
     }
 }
