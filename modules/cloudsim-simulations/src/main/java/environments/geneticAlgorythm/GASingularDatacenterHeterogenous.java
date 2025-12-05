@@ -8,7 +8,7 @@
  */
 
 
-package environments.heterogenous.geneticAlgorythm;
+package environments.geneticAlgorythm;
 
 import technicals.simulationParameters;
 
@@ -47,7 +47,7 @@ import brokers.GeneticAlgorithm.GeneticAlgorithmDatacenterBroker;
  * An example showing how to create
  * scalable simulations.
  */
-public class GAMultiDatacenterHeterogenous {
+public class GASingularDatacenterHeterogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -98,8 +98,6 @@ public class GAMultiDatacenterHeterogenous {
 	}
 
 
-	////////////////////////// STATIC METHODS ///////////////////////
-
 	/**
 	 * Creates main() to run this example
 	 */
@@ -119,17 +117,17 @@ public class GAMultiDatacenterHeterogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 0.8);
-			Datacenter datacenter1 = sp.createDatacenter("Datacenter_1", 4, sp.bw+200, 1.2);
-			Datacenter datacenter2 = sp.createDatacenter("Datacenter_2", 2, sp.bw-200, 1);
-			Datacenter datacenter3 = sp.createDatacenter("Datacenter_3", 4, sp.bw-200, 3);
+			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
 
 			//Third step: Create Broker
 			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			vmlist = createVM(brokerId,24); 
-			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 
+			//Fourth step: Create VMs and Cloudlets and send them to broker
+			int totalCloudlets = 1000;
+
+			vmlist = createVM(brokerId,4); //creating 20 vms
+			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); // creating 40 cloudlets	
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);
@@ -144,7 +142,7 @@ public class GAMultiDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			sp.writeCloudletListToCSV(newList, path + "GAMultiDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "GASingularDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
@@ -153,101 +151,5 @@ public class GAMultiDatacenterHeterogenous {
 			e.printStackTrace();
 			Log.println("The simulation has been terminated due to an unexpected error");
 		}
-	}
-
-	private static Datacenter createDatacenter(String name, int hostNumber, int bw, double cost_multiplier){
-
-		// Here are the steps needed to create a PowerDatacenter:
-		// 1. We need to create a list to store one or more
-		//    Machines
-		List<Host> hostList = new ArrayList<>();
-
-		//int hostNumber = 2;
-		int PeNumber = hostNumber*4;
-
-		int mips = 1000;
-
-		//4. Create Hosts with its id and list of PEs and add them to the list of machines
-		int hostId=0;
-		int ram = 4000; //host memory (MB)
-		long storage = 1000000; //host storage
-		//int bw = 10000;
-
-		for (int i = 0; hostNumber > i; i++){
-			List<Pe> peList = new ArrayList<>();
-			for(int j = 0; PeNumber > j; j++){
-				peList.add(new Pe(j, new PeProvisionerSimple(mips)));
-			}
-
-			hostList.add(
-    			new Host(
-    				hostId,
-    				new RamProvisionerSimple(ram),
-    				new BwProvisionerSimple(bw),
-    				storage,
-    				peList,
-    				new VmSchedulerTimeShared(peList)
-    			)
-    		); 
-
-			hostId++;
-		}
-
-		// 5. Create a DatacenterCharacteristics object that stores the
-		//    properties of a data center: architecture, OS, list of
-		//    Machines, allocation policy: time- or space-shared, time zone
-		//    and its price (G$/Pe time unit).
-		String arch = "x86";      // system architecture
-		String os = "Linux";          // operating system
-		String vmm = "Xen";
-		double time_zone = 10.0;         // time zone this resource located
-		double cost = 3.0 * cost_multiplier;              // the cost of using processing in this resource
-		double costPerMem = 0.05 * cost_multiplier;		// the cost of using memory in this resource
-		double costPerStorage = 0.1 * cost_multiplier;	// the cost of using storage in this resource
-		double costPerBw = 0.1 * cost_multiplier;			// the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<>();	//we are not adding SAN devices by now
-
-		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
-                arch, os, vmm, hostList, time_zone, cost, costPerMem, costPerStorage, costPerBw);
-
-
-		// 6. Finally, we need to create a PowerDatacenter object.
-		Datacenter datacenter = null;
-		try {
-			datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return datacenter;
-	}
-
-	/**
-	 * Prints the Cloudlet objects
-	 * @param list  list of Cloudlets
-	 */
-	private static void printCloudletList(List<Cloudlet> list) {
-		Cloudlet cloudlet;
-
-		String indent = "    ";
-		Log.println();
-		Log.println("========== OUTPUT ==========");
-		Log.println("Cloudlet ID" + indent + "STATUS" + indent +
-				"Data center ID" + indent + "VM ID" + indent + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
-
-		DecimalFormat dft = new DecimalFormat("###.##");
-        for (Cloudlet value : list) {
-            cloudlet = value;
-            Log.print(indent + cloudlet.getCloudletId() + indent + indent);
-
-            if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
-                Log.print("SUCCESS");
-
-                Log.println(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getGuestId() +
-                        indent + indent + indent + dft.format(cloudlet.getActualCPUTime()) +
-                        indent + indent + dft.format(cloudlet.getExecStartTime()) + indent + indent + indent + dft.format(cloudlet.getExecFinishTime()));
-            }
-        }
-
 	}
 }

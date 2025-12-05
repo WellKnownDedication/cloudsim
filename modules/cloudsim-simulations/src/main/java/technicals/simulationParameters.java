@@ -25,8 +25,8 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 public class simulationParameters {
-	public int cloudletNumber = 10000;
-	public int bw = 1500;
+	public int cloudletNumber = 7500;
+	public int bw = 2000;
 
 	public static Datacenter createDatacenter(String name, int hostCount, int bw, double cost_multiplier){
 
