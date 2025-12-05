@@ -1,5 +1,6 @@
 package brokers.CustomMLBased;
 
+import org.apache.commons.math3.analysis.function.Log;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Vm;
@@ -7,6 +8,8 @@ import org.cloudbus.cloudsim.core.CloudActionTags;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.GuestEntity;
 import org.cloudbus.cloudsim.lists.VmList;
+
+import technicals.simulationParameters;
 
 import java.util.*;
 
@@ -18,23 +21,8 @@ public class ABCDatacenterBroker extends DatacenterBroker {
 
     @Override
     protected void submitCloudlets() {
-
-        for (Cloudlet cl : getCloudletList()) {
-
-            int vmId = cl.getGuestId();
-
-            Integer datacenterId = getVmsToDatacentersMap().get(vmId);
-
-            if (datacenterId == null) {
-                System.err.println("Skipping cloudlet " + cl.getCloudletId()
-                        + " (invalid VM ID " + vmId + ")");
-                continue;
-            }
-
-            sendNow(datacenterId, CloudActionTags.CLOUDLET_SUBMIT, cl);
-            cloudletsSubmitted++;
-            getCloudletSubmittedList().add(cl);
-        }
+        runArtificialBeeColony();
+        super.submitCloudlets();
     }
 
     public void runArtificialBeeColony() {
@@ -268,7 +256,6 @@ public class ABCDatacenterBroker extends DatacenterBroker {
             cloudlets.get(i).setGuestId(chosenVm.getId());
         }
 
-        // now replace lists
         getGuestList().clear();
         getCloudletList().clear();
 

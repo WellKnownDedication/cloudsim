@@ -4,11 +4,11 @@ mvn clean compile -pl modules/cloudsim-simulations/
 #mvn exec:java -e -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.heterogeneousDataPrep.dataPrepSingularDatacenterHeterogenous
 
 # PSO datacenter brocker
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.PSO.PSOSingularDatacenterHomogenous
-# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.PSO.PSOSingularDatacenterHeterogenous 
+#mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.PSO.PSOSingularDatacenterHomogenous
+mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.PSO.PSOSingularDatacenterHeterogenous 
 
 # ABC datacenter brocker
-mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.ABC.ABCSingularDatacenterHomogenous
+#mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.homogenous.ABC.ABCSingularDatacenterHomogenous
 mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.heterogenous.ABC.ABCSingularDatacenterHeterogenous 
 
 # # Baseline with built-in datacenter brokers

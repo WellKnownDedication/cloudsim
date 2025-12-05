@@ -14,11 +14,11 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
     @Override
     protected void submitCloudlets() {
-        runDiscretePSO();
+        runPSO();
         super.submitCloudlets();
     }
 
-    public void runDiscretePSO() {
+    public void runPSO() {
 
         List<Cloudlet> cloudlets = new ArrayList<>(getCloudletList());
         int numCloudlets = cloudlets.size();

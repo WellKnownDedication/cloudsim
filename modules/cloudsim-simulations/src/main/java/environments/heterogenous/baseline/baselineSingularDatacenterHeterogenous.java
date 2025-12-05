@@ -110,7 +110,8 @@ public class baselineSingularDatacenterHeterogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
+			int num_vms = 4; // num of VMs and hosts
+			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", num_vms, sp.bw, 1);
 
 			//Third step: Create Broker
 			broker = new DatacenterBroker("Broker");;
@@ -119,7 +120,7 @@ public class baselineSingularDatacenterHeterogenous {
 			//Fourth step: Create VMs and Cloudlets and send them to broker
 			int totalCloudlets = 1000;
 
-			vmlist = createVM(brokerId,4); //creating 20 vms
+			vmlist = createVM(brokerId,num_vms); //creating 20 vms
 			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); // creating 40 cloudlets	
 
 

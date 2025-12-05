@@ -25,7 +25,7 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 public class simulationParameters {
-	public int cloudletNumber = 5000;
+	public int cloudletNumber = 10000;
 	public int bw = 1500;
 
 	public static Datacenter createDatacenter(String name, int hostCount, int bw, double cost_multiplier){
@@ -101,6 +101,7 @@ public class simulationParameters {
 	
 		// Header
 		sb.append("Cloudlet ID,")
+		.append("VM ID,")
 		  .append("User ID,")
 		  .append("Status,")
 		  .append("Data Center ID,")
@@ -114,6 +115,7 @@ public class simulationParameters {
 		for (Cloudlet cloudlet : list) {
 			//if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
 				sb.append(cloudlet.getCloudletId()).append(",");
+				sb.append(cloudlet.getGuestId()).append(",");
 				sb.append(cloudlet.getUserId()).append(",");
 				sb.append(cloudlet.getStatus()).append(",");
 				sb.append(cloudlet.getResourceId()).append(",");

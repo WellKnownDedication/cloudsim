@@ -95,12 +95,6 @@ public class roundRobinSingularDatacenterHeterogenous {
 		return list;
 	}
 
-
-	////////////////////////// STATIC METHODS ///////////////////////
-
-	/**
-	 * Creates main() to run this example
-	 */
 	public static void main(String[] args) {
 		Log.println("Starting baselineSingularDatacenter...");
 
@@ -117,13 +111,14 @@ public class roundRobinSingularDatacenterHeterogenous {
 
 			// Second step: Create Datacenters
 			//Datacenters are the resource providers in CloudSim. We need at least one of them to run a CloudSim simulation
-			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", 2, sp.bw, 1);
+			int num_vms = 4; // num of VMs and hosts
+			Datacenter datacenter0 = sp.createDatacenter("Datacenter_0", num_vms, sp.bw, 1);
 
 			//Third step: Create Broker
 			broker = new DatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			vmlist = createVM(brokerId,4); 
+			vmlist = createVM(brokerId,num_vms); 
 			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 
 
 			broker.submitGuestList(vmlist);
