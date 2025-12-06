@@ -25,8 +25,9 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 public class simulationParameters {
-	public int cloudletNumber = 7500;
+	public int cloudletNumber = 6000;
 	public int bw = 2000;
+	public int num_vms_singleDC = 3;
 
 	public static Datacenter createDatacenter(String name, int hostCount, int bw, double cost_multiplier){
 
@@ -38,7 +39,7 @@ public class simulationParameters {
 		//int hostNumber = 2;
 		int PeNumber = 8;
 
-		int mips = 8000;
+		int mips = 5000;
 
 		//4. Create Hosts with its id and list of PEs and add them to the list of machines
 		int hostId=0;
@@ -93,6 +94,41 @@ public class simulationParameters {
 		}
 
 		return datacenter;
+	}
+
+	public static List<Vm> createVM(int userId, final int vms) {
+		List<Vm> list = new ArrayList<>();
+
+		//VM Parameters
+		long size = 4000; //image size (MB)
+		int ram = 512; //vm memory (MB)
+		int mips = 1000;
+		long bw = 1000;
+		int pesNumber = 2; //number of cpus
+		String vmm = "Xen"; //VMM name
+
+		for(int i=0;i<vms;i++){
+			list.add(new Vm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
+		}
+
+		return list;
+	}
+
+	public static List<Cloudlet> createCloudletHeterogenous(int userId, int cloudlets){
+		List<Cloudlet> list = new ArrayList<>();
+		Random rand = new Random();
+
+		for(int i=0;i<cloudlets;i++){
+			long length = 5000 + rand.nextInt(5000);;
+			long fileSize = 700 + rand.nextInt(800); 
+			long outputSize = 700 + rand.nextInt(300);
+			int pesNumber = 1 + rand.nextInt(1);
+			UtilizationModel utilizationModel = new UtilizationModelStochastic();
+			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
+			list.getLast().setUserId(userId);
+		}
+
+		return list;
 	}
     
     public static void writeCloudletListToCSV(List<Cloudlet> list, String filePath) {
@@ -183,41 +219,6 @@ public class simulationParameters {
     } catch (IOException e) {
         e.printStackTrace();
     }
-	}
-
-	private static List<Vm> createVM(int userId, final int vms) {
-		//Creates a container to store VMs. This list is passed to the broker later
-		List<Vm> list = new ArrayList<>();
-
-		//VM Parameters
-		long size = 10000; //image size (MB)
-		int ram = 512; //vm memory (MB)
-		int mips = 1000;
-		long bw = 1000;
-		int pesNumber = 2; //number of cpus
-		String vmm = "Xen"; //VMM name
-
-		//create VMs
-		for(int i=0;i<vms;i++){
-			list.add(new Vm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
-		}
-
-		return list;
-	}
-
-	private static List<Vm> createVM(int userId, final int vms, long size, int ram, int mips, long bw, int pesNumber) {
-		//Creates a container to store VMs. This list is passed to the broker later
-		List<Vm> list = new ArrayList<>();
-
-		//VM Parameters
-		String vmm = "Xen"; //VMM name
-
-		//create VMs
-		for(int i=0;i<vms;i++){
-			list.add(new Vm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
-		}
-
-		return list;
 	}
 
 }

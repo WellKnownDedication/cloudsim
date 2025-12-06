@@ -8,7 +8,7 @@
  */
 
 
-package environments.heterogenous.roundRobin;
+package environments.roundRobin;
 
 import technicals.simulationParameters;
 

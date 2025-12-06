@@ -60,15 +60,15 @@ public class ABCDatacenterBroker extends DatacenterBroker {
             vms.set(idx, tmp2);
         }
 
-        final int NUM_BEES = 50;
-        final int MAX_ITER = 40;
-        final int LIMIT = 5;
+        final int NUM_BEES = 10;
+        final int MAX_ITER = 50;
+        final int LIMIT = numCloudlets%5;
 
-        final double hybridProb = 0.40;
-        final int LOCAL_SEARCH_TRIES = 6;
+        final double hybridProb = 0.5;
+        final int LOCAL_SEARCH_TRIES = 5;
 
-        final double alpha0 = 0.2;
-        final double alphaScale = 3.0;
+        final double alpha0 = 0.5;
+        final double alphaScale = 1.5;
 
         Random rand = new Random();
 
@@ -83,12 +83,16 @@ public class ABCDatacenterBroker extends DatacenterBroker {
         seeds.add(heuristicMCT(cloudlets, vms));
         seeds.add(heuristicLPT(cloudlets, vms));
         seeds.add(heuristicMinLoad(cloudlets, vms));
+        seeds.add(heuristicMCT(cloudlets, vms));
+        seeds.add(heuristicLPT(cloudlets, vms));
+        seeds.add(heuristicMinLoad(cloudlets, vms));
 
         int seedCount = Math.min(seeds.size(), NUM_BEES);
 
         for (int b = 0; b < NUM_BEES; b++) {
             if (b < seedCount && seeds.get(b) != null) {
-                foods[b] = Arrays.copyOf(seeds.get(b), numCloudlets);
+                // foods[b] = Arrays.copyOf(seeds.get(b), numCloudlets);
+                foods[b] = Arrays.copyOf(seeds.get(b % seedCount),numCloudlets);
             } else {
                 for (int i = 0; i < numCloudlets; i++) {
                     foods[b][i] = rand.nextInt(numVms);
@@ -106,7 +110,7 @@ public class ABCDatacenterBroker extends DatacenterBroker {
             trial[b] = 0;
         }
 
-        // ABC main loop
+        // main loop
         for (int iter = 0; iter < MAX_ITER; iter++) {
 
             double alpha = alpha0 + alphaScale * ((double) iter / Math.max(1, (MAX_ITER - 1)));
@@ -125,7 +129,7 @@ public class ABCDatacenterBroker extends DatacenterBroker {
                     neighbor[c2] = tmp;
                 }
 
-                if (rand.nextDouble() < 0.4) {
+                if (rand.nextDouble() < hybridProb) {
                     neighbor[rand.nextInt(numCloudlets)] = rand.nextInt(numVms);
                 }
 

@@ -65,7 +65,7 @@ public class PSODatacenterBroker extends DatacenterBroker {
 
         double w = 0.4;      // inertia
         double c1 = 1.3;     // personal influence
-        double c2 = 1.3;     // global influence
+        double c2 = 1.8;     // global influence
 
         Random rand = new Random();
 
@@ -167,10 +167,10 @@ public class PSODatacenterBroker extends DatacenterBroker {
         }
 
         double penalty = 0;
-        double alpha = 2.0;  // penalty strength (tuneable)
+        double alpha = 0.3;  // penalty strength (tuneable)
 
-        for (int l : loads) {
-            penalty += alpha * (l * l);
+        for (int lo : loads) {
+            penalty += alpha * (lo * lo);
         }
 
         return sum + penalty;

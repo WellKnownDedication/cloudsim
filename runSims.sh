@@ -11,7 +11,7 @@ mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.ba
 # mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.baseline.baselineMultiDatacenterHeterogenous
 
 # # RoundRobin datacenter Brockers
-mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.roundRobin.roundRobinSingularDatacenterHeterogenous
+# mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.roundRobin.roundRobinSingularDatacenterHeterogenous
 # mvn exec:java -pl modules/cloudsim-simulations/ -Dexec.mainClass=environments.roundRobin.roundRobinMultiDatacenterHeterogenous
 
 # # GeneticAlgorythm datacenter Brockers
