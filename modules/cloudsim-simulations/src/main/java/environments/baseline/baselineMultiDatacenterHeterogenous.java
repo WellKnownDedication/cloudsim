@@ -79,7 +79,7 @@ public class baselineMultiDatacenterHeterogenous {
 			broker = new DatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			vmlist = sp.createVM(brokerId,sp.num_vms_singleDC); 
+			vmlist = sp.createVM(brokerId,sp.num_vms_singleDC*4); 
 			cloudletList = sp.createCloudletHeterogenous(brokerId,sp.cloudletNumber);
 
 			broker.submitGuestList(vmlist);
