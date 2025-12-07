@@ -25,7 +25,7 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
 public class simulationParameters {
-	public int cloudletNumber = 6000;
+	public int cloudletNumber = 5000;
 	public int bw = 2000;
 	public int num_vms_singleDC = 3;
 

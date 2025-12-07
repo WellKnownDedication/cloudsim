@@ -54,54 +54,6 @@ public class baselineMultiDatacenterHeterogenous {
 	/** The vmlist. */
 	private static List<Vm> vmlist;
 
-	private static List<Vm> createVM(int userId, final int vms) {
-		//Creates a container to store VMs. This list is passed to the broker later
-		List<Vm> list = new ArrayList<>();
-
-		//VM Parameters
-		long size = 10000; //image size (MB)
-		int ram = 512; //vm memory (MB)
-		int mips = 1000;
-		long bw = 1000;
-		int pesNumber = 2; //number of cpus
-		String vmm = "Xen"; //VMM name
-
-		//create VMs
-		for(int i=0;i<vms;i++){
-			list.add(new Vm(i, userId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerSpaceShared()));
-		}
-
-		return list;
-	}
-
-	
-	private static List<Cloudlet> createCloudlet(int userId, int cloudlets){
-		// Creates a container to store Cloudlets
-		List<Cloudlet> list = new ArrayList<>();
-		Random rand = new Random();
-
-		//cloudlet parameters
-		
-
-		for(int i=0;i<cloudlets;i++){
-			long length = 1000 + rand.nextInt(19000);;
-			long fileSize = 300 + rand.nextInt(700); 
-			long outputSize = 300 + rand.nextInt(700);
-			int pesNumber = 1 + rand.nextInt(2);
-			UtilizationModel utilizationModel = new UtilizationModelStochastic();
-			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
-			list.getLast().setUserId(userId);
-		}
-
-		return list;
-	}
-
-
-	////////////////////////// STATIC METHODS ///////////////////////
-
-	/**
-	 * Creates main() to run this example
-	 */
 	public static void main(String[] args) {
 		Log.println("Starting baselineSingularDatacenter...");
 
@@ -127,8 +79,8 @@ public class baselineMultiDatacenterHeterogenous {
 			broker = new DatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
-			vmlist = createVM(brokerId,24);
-			cloudletList = createCloudlet(brokerId,sp.cloudletNumber); 
+			vmlist = sp.createVM(brokerId,sp.num_vms_singleDC); 
+			cloudletList = sp.createCloudletHeterogenous(brokerId,sp.cloudletNumber);
 
 			broker.submitGuestList(vmlist);
 			broker.submitCloudletList(cloudletList);

@@ -8,7 +8,7 @@
  */
 
 
-package environments.geneticAlgorythm;
+package environments.ABC;
 
 import technicals.simulationParameters;
 
@@ -41,13 +41,14 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+import brokers.CustomMLBased.ABCDatacenterBroker;
 import brokers.GeneticAlgorithm.GeneticAlgorithmDatacenterBroker;
 
 /**
  * An example showing how to create
  * scalable simulations.
  */
-public class GAMultiDatacenterHeterogenous {
+public class ABCMultiDatacenterHeterogenous {
 	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
@@ -78,7 +79,7 @@ public class GAMultiDatacenterHeterogenous {
 			Datacenter datacenter3 = sp.createDatacenter("Datacenter_3", 4, sp.bw-200, 3);
 
 			//Third step: Create Broker
-			broker = new GeneticAlgorithmDatacenterBroker("Broker");;
+			broker = new ABCDatacenterBroker("Broker");;
 			int brokerId = broker.getId();
 
 			vmlist = sp.createVM(brokerId,sp.num_vms_singleDC*4); 
@@ -97,7 +98,7 @@ public class GAMultiDatacenterHeterogenous {
 
 			//printCloudletList(newList);
 			String path = "modules/cloudsim-simulations/src/main/java/results/";
-			sp.writeCloudletListToCSV(newList, path + "GAMultiDatacenterHeterogenous.csv");
+			sp.writeCloudletListToCSV(newList, path + "ABCMultiDatacenterHeterogenous.csv");
 
 			Log.println("CloudSimExample6 finished!");
 		}
