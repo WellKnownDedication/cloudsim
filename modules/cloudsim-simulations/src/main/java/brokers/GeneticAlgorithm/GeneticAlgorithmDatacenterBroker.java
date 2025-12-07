@@ -162,7 +162,7 @@ public class GeneticAlgorithmDatacenterBroker extends DatacenterBroker {
     // @Override
     // public void submitCloudletList(List<? extends Cloudlet> list) {
     //     getCloudletList().addAll(list);
-    //     //runGeneticAlgorithm();
+    //     runGeneticAlgorithm();
     // }
 
     @Override
