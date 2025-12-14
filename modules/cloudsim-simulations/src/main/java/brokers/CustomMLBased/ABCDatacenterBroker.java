@@ -53,11 +53,11 @@ public class ABCDatacenterBroker extends DatacenterBroker {
             vms.set(idx, tmp2);
         }
 
-        final int NUM_BEES = 6;
+        final int NUM_BEES = 10;
         final int MAX_ITER = 50;
         final int LIMIT = numCloudlets % 5;
 
-        final double hybridProb = 0.3;
+        final double hybridProb = 0.5;
         final int LOCAL_SEARCH_TRIES = 5;
 
         Random rand = new Random();
@@ -70,6 +70,9 @@ public class ABCDatacenterBroker extends DatacenterBroker {
         double bestScore = Double.MAX_VALUE;
 
         List<int[]> seeds = new ArrayList<>();
+        seeds.add(heuristicMCT(cloudlets, vms));
+        seeds.add(heuristicLPT(cloudlets, vms));
+        seeds.add(heuristicMinLoad(cloudlets, vms));
         seeds.add(heuristicMCT(cloudlets, vms));
         seeds.add(heuristicLPT(cloudlets, vms));
         seeds.add(heuristicMinLoad(cloudlets, vms));
@@ -175,16 +178,19 @@ public class ABCDatacenterBroker extends DatacenterBroker {
                     neighbor[c2] = tmp;
                 }
 
-                if (rand.nextDouble() < 0.2) {
-                    neighbor[rand.nextInt(numCloudlets)] = rand.nextInt(numVms);
-                }
-
                 if (rand.nextDouble() < hybridProb) {
                     int copies = Math.max(1, numCloudlets / 12);
                     for (int k = 0; k < copies; k++) {
                         int idx = rand.nextInt(numCloudlets);
                         neighbor[idx] = bestSolution[idx];
                     }
+                }
+
+                if (rand.nextDouble() < 0.8) {
+                    neighbor[rand.nextInt(numCloudlets)] = rand.nextInt(numVms);
+                }
+                if (rand.nextDouble() < 0.8) {
+                    neighbor[rand.nextInt(numCloudlets)] = rand.nextInt(numVms);
                 }
 
                 localSearchGreedy(neighbor, cloudlets, vms, LOCAL_SEARCH_TRIES, rand);

@@ -3,7 +3,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -100,10 +99,10 @@ public class simulationParameters {
 		List<Vm> list = new ArrayList<>();
 
 		//VM Parameters
-		long size = 4000; //image size (MB)
-		int ram = 512; //vm memory (MB)
+		long size = 10000; //image size (MB)
+		int ram = 4000; //vm memory (MB)
 		int mips = 512;
-		long bw = 1000;
+		long bw = 500;
 		int pesNumber = 1; //number of cpus
 		String vmm = "Xen"; //VMM name
 
@@ -119,7 +118,7 @@ public class simulationParameters {
 		Random rand = new Random();
 
 		for(int i=0;i<cloudlets;i++){
-			long length = 10000 + rand.nextInt(5000);;
+			long length = 20000 + rand.nextInt(30000);;
 			long fileSize = 700 + rand.nextInt(800); 
 			long outputSize = 700 + rand.nextInt(300);
 			int pesNumber = 1;
@@ -149,7 +148,6 @@ public class simulationParameters {
 		  
 	
 		for (Cloudlet cloudlet : list) {
-			//if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
 				sb.append(cloudlet.getCloudletId()).append(",");
 				sb.append(cloudlet.getGuestId()).append(",");
 				sb.append(cloudlet.getUserId()).append(",");
@@ -165,7 +163,6 @@ public class simulationParameters {
 				sb.append(cloudlet.getUtilizationModelRam().getClass().getSimpleName()).append(",");
 				sb.append(cloudlet.getUtilizationModelBw().getClass().getSimpleName()).append(",");
 				sb.append(dft.format(cloudlet.getWaitingTime())).append("\n");
-			//}
 		}
 	
 		try (FileWriter writer = new FileWriter(filePath)) {
