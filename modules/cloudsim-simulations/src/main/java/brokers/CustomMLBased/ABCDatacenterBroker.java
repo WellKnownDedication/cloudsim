@@ -1,15 +1,8 @@
 package brokers.CustomMLBased;
 
-import org.apache.commons.math3.analysis.function.Log;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
 import org.cloudbus.cloudsim.Vm;
-import org.cloudbus.cloudsim.core.CloudActionTags;
-import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.GuestEntity;
-import org.cloudbus.cloudsim.lists.VmList;
-
-import technicals.simulationParameters;
 
 import java.util.*;
 

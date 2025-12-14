@@ -102,7 +102,7 @@ public class simulationParameters {
 		//VM Parameters
 		long size = 4000; //image size (MB)
 		int ram = 512; //vm memory (MB)
-		int mips = 1000;
+		int mips = 5000;
 		long bw = 1000;
 		int pesNumber = 2; //number of cpus
 		String vmm = "Xen"; //VMM name
