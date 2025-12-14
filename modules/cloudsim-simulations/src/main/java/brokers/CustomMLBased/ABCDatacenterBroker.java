@@ -55,13 +55,10 @@ public class ABCDatacenterBroker extends DatacenterBroker {
 
         final int NUM_BEES = 6;
         final int MAX_ITER = 50;
-        final int LIMIT = numCloudlets%5;
+        final int LIMIT = numCloudlets % 5;
 
-        final double hybridProb = 0.5;
+        final double hybridProb = 0.3;
         final int LOCAL_SEARCH_TRIES = 5;
-
-        final double alpha0 = 0.5;
-        final double alphaScale = 1.5;
 
         Random rand = new Random();
 
@@ -81,16 +78,15 @@ public class ABCDatacenterBroker extends DatacenterBroker {
 
         for (int b = 0; b < NUM_BEES; b++) {
             if (b < seedCount && seeds.get(b) != null) {
-                // foods[b] = Arrays.copyOf(seeds.get(b), numCloudlets);
-                foods[b] = Arrays.copyOf(seeds.get(b % seedCount),numCloudlets);
+                foods[b] = Arrays.copyOf(seeds.get(b % seedCount), numCloudlets);
             } else {
                 for (int i = 0; i < numCloudlets; i++) {
                     foods[b][i] = rand.nextInt(numVms);
                 }
             }
 
-            localSearchGreedy(foods[b], cloudlets, vms, LOCAL_SEARCH_TRIES, alpha0, rand);
-            fitness[b] = computeFitnessWithAlpha(foods[b], cloudlets, vms, alpha0);
+            localSearchGreedy(foods[b], cloudlets, vms, LOCAL_SEARCH_TRIES, rand);
+            fitness[b] = computeFitness(foods[b], cloudlets, vms);
 
             if (fitness[b] < bestScore) {
                 bestScore = fitness[b];
@@ -100,10 +96,7 @@ public class ABCDatacenterBroker extends DatacenterBroker {
             trial[b] = 0;
         }
 
-        // main loop
         for (int iter = 0; iter < MAX_ITER; iter++) {
-
-            double alpha = alpha0 + alphaScale * ((double) iter / Math.max(1, (MAX_ITER - 1)));
 
             for (int b = 0; b < NUM_BEES; b++) {
 
@@ -123,17 +116,8 @@ public class ABCDatacenterBroker extends DatacenterBroker {
                     neighbor[rand.nextInt(numCloudlets)] = rand.nextInt(numVms);
                 }
 
-                if (rand.nextDouble() < hybridProb) {
-                    int copies = Math.max(1, numCloudlets / 10);
-                    for (int k = 0; k < copies; k++) {
-                        int idx = rand.nextInt(numCloudlets);
-                        neighbor[idx] = bestSolution[idx];
-                    }
-                }
-
-                localSearchGreedy(neighbor, cloudlets, vms, LOCAL_SEARCH_TRIES, alpha, rand);
-
-                double nfit = computeFitnessWithAlpha(neighbor, cloudlets, vms, alpha);
+                localSearchGreedy(neighbor, cloudlets, vms, LOCAL_SEARCH_TRIES, rand);
+                double nfit = computeFitness(neighbor, cloudlets, vms);
 
                 if (nfit < fitness[b]) {
                     foods[b] = neighbor;
@@ -148,7 +132,7 @@ public class ABCDatacenterBroker extends DatacenterBroker {
             }
 
             double sum = 0;
-            double eps = 0.00000001;
+            double eps = 0.00001;
 
             double[] nectar = new double[NUM_BEES];
             for (int b = 0; b < NUM_BEES; b++) {
@@ -191,7 +175,7 @@ public class ABCDatacenterBroker extends DatacenterBroker {
                     neighbor[c2] = tmp;
                 }
 
-                if (rand.nextDouble() < 0.45) {
+                if (rand.nextDouble() < 0.2) {
                     neighbor[rand.nextInt(numCloudlets)] = rand.nextInt(numVms);
                 }
 
@@ -203,9 +187,8 @@ public class ABCDatacenterBroker extends DatacenterBroker {
                     }
                 }
 
-                localSearchGreedy(neighbor, cloudlets, vms, LOCAL_SEARCH_TRIES, alpha, rand);
-
-                double nfit = computeFitnessWithAlpha(neighbor, cloudlets, vms, alpha);
+                localSearchGreedy(neighbor, cloudlets, vms, LOCAL_SEARCH_TRIES, rand);
+                double nfit = computeFitness(neighbor, cloudlets, vms);
 
                 if (nfit < fitness[selected]) {
                     foods[selected] = neighbor;
@@ -221,19 +204,16 @@ public class ABCDatacenterBroker extends DatacenterBroker {
                 count++;
             }
 
-            // scout phase
             for (int b = 0; b < NUM_BEES; b++) {
                 if (trial[b] >= LIMIT) {
-
                     int[] newFood = new int[numCloudlets];
                     for (int i = 0; i < numCloudlets; i++) {
                         newFood[i] = rand.nextInt(numVms);
                     }
 
-                    localSearchGreedy(newFood, cloudlets, vms, LOCAL_SEARCH_TRIES, alpha, rand);
-
+                    localSearchGreedy(newFood, cloudlets, vms, LOCAL_SEARCH_TRIES, rand);
                     foods[b] = newFood;
-                    fitness[b] = computeFitnessWithAlpha(newFood, cloudlets, vms, alpha);
+                    fitness[b] = computeFitness(newFood, cloudlets, vms);
                     trial[b] = 0;
 
                     if (fitness[b] < bestScore) {
@@ -245,60 +225,50 @@ public class ABCDatacenterBroker extends DatacenterBroker {
         }
 
         for (int i = 0; i < numCloudlets; i++) {
-            int vmIndex = bestSolution[i];
-            Vm chosenVm = vms.get(vmIndex);
+            Vm chosenVm = vms.get(bestSolution[i]);
             cloudlets.get(i).setGuestId(chosenVm.getId());
         }
 
         getGuestList().clear();
         getCloudletList().clear();
-
         getGuestList().addAll(vms);
         getCloudletList().addAll(cloudlets);
     }
 
-    private double computeFitnessWithAlpha(int[] mapping, List<Cloudlet> cl, List<Vm> vm, double alpha) {
+    private double computeFitness(int[] mapping, List<Cloudlet> cl, List<Vm> vm) {
         double sum = 0.0;
-
-        int numVms = vm.size();
-        int[] loads = new int[numVms];
+        int[] loads = new int[vm.size()];
 
         for (int i = 0; i < mapping.length; i++) {
             Cloudlet c = cl.get(i);
             Vm v = vm.get(mapping[i]);
-
             sum += c.getCloudletLength() / v.getMips();
             loads[mapping[i]]++;
         }
 
         double penalty = 0;
         for (int l : loads) {
-            penalty += alpha * (l * l);
+            penalty += (l * l);
         }
 
         return sum + penalty;
     }
 
-    private void localSearchGreedy(int[] sol, List<Cloudlet> cl, List<Vm> vm, int tries, double alpha, Random rand) {
-        int n = sol.length;
-        double current = computeFitnessWithAlpha(sol, cl, vm, alpha);
+    private void localSearchGreedy(int[] sol, List<Cloudlet> cl, List<Vm> vm, int tries, Random rand) {
+        double current = computeFitness(sol, cl, vm);
 
         for (int t = 0; t < tries; t++) {
-            if (n < 2) return;
-
-            int a = rand.nextInt(n);
-            int b = rand.nextInt(n);
-            while (b == a) b = rand.nextInt(n);
+            int a = rand.nextInt(sol.length);
+            int b = rand.nextInt(sol.length);
+            while (b == a) b = rand.nextInt(sol.length);
 
             int tmp = sol[a];
             sol[a] = sol[b];
             sol[b] = tmp;
 
-            double nf = computeFitnessWithAlpha(sol, cl, vm, alpha);
-
-            if (nf < current) {
-                current = nf;
-            } else {
+            double nf = computeFitness(sol, cl, vm);
+            if (nf < current) current = nf;
+            else {
                 tmp = sol[a];
                 sol[a] = sol[b];
                 sol[b] = tmp;
@@ -307,32 +277,24 @@ public class ABCDatacenterBroker extends DatacenterBroker {
     }
 
     private int[] heuristicMCT(List<Cloudlet> cl, List<Vm> vm) {
-        int n = cl.size();
-        int m = vm.size();
-        int[] sol = new int[n];
-
-        for (int i = 0; i < n; i++) {
+        int[] sol = new int[cl.size()];
+        for (int i = 0; i < cl.size(); i++) {
             double best = Double.MAX_VALUE;
             int chosen = 0;
-
-            for (int v = 0; v < m; v++) {
+            for (int v = 0; v < vm.size(); v++) {
                 double val = cl.get(i).getCloudletLength() / vm.get(v).getMips();
                 if (val < best) {
                     best = val;
                     chosen = v;
                 }
             }
-
             sol[i] = chosen;
         }
-
         return sol;
     }
 
     private int[] heuristicLPT(List<Cloudlet> cl, List<Vm> vm) {
         int n = cl.size();
-        int m = vm.size();
-
         Integer[] idx = new Integer[n];
         for (int i = 0; i < n; i++) idx[i] = i;
 
@@ -341,16 +303,13 @@ public class ABCDatacenterBroker extends DatacenterBroker {
         );
 
         int[] sol = new int[n];
-        for (int i = 0; i < n; i++) {
-            sol[idx[i]] = i % m;
-        }
+        for (int i = 0; i < n; i++) sol[idx[i]] = i % vm.size();
         return sol;
     }
 
     private int[] heuristicMinLoad(List<Cloudlet> cl, List<Vm> vm) {
         int n = cl.size();
         int m = vm.size();
-
         double[] load = new double[m];
         int[] sol = new int[n];
 
@@ -364,17 +323,15 @@ public class ABCDatacenterBroker extends DatacenterBroker {
         for (int id : idx) {
             int best = 0;
             double bestVal = Double.MAX_VALUE;
-
             for (int v = 0; v < m; v++) {
-                double est = load[v] + (cl.get(id).getCloudletLength() / vm.get(v).getMips());
+                double est = load[v] + cl.get(id).getCloudletLength() / vm.get(v).getMips();
                 if (est < bestVal) {
                     bestVal = est;
                     best = v;
                 }
             }
-
             sol[id] = best;
-            load[best] += (cl.get(id).getCloudletLength() / vm.get(best).getMips());
+            load[best] += cl.get(id).getCloudletLength() / vm.get(best).getMips();
         }
         return sol;
     }

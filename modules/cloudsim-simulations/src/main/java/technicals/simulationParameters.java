@@ -102,9 +102,9 @@ public class simulationParameters {
 		//VM Parameters
 		long size = 4000; //image size (MB)
 		int ram = 512; //vm memory (MB)
-		int mips = 5000;
+		int mips = 512;
 		long bw = 1000;
-		int pesNumber = 2; //number of cpus
+		int pesNumber = 1; //number of cpus
 		String vmm = "Xen"; //VMM name
 
 		for(int i=0;i<vms;i++){
@@ -119,10 +119,10 @@ public class simulationParameters {
 		Random rand = new Random();
 
 		for(int i=0;i<cloudlets;i++){
-			long length = 5000 + rand.nextInt(5000);;
+			long length = 10000 + rand.nextInt(5000);;
 			long fileSize = 700 + rand.nextInt(800); 
 			long outputSize = 700 + rand.nextInt(300);
-			int pesNumber = 1 + rand.nextInt(1);
+			int pesNumber = 1;
 			UtilizationModel utilizationModel = new UtilizationModelStochastic();
 			list.add(new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel));
 			list.getLast().setUserId(userId);
